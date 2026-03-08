@@ -244,65 +244,37 @@ const legendItems: LegendItem[] = [
 ]
 
 useHead({
-  htmlAttrs: {
-    lang: 'fr',
-  },
-  title: 'Architectures Logicielles',
-  link: [
+  title: 'Panorama complet',
+  script: [
     {
-      rel: 'preconnect',
-      href: 'https://fonts.googleapis.com',
-    },
-    {
-      rel: 'preconnect',
-      href: 'https://fonts.gstatic.com',
-      crossorigin: '',
-    },
-    {
-      rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap',
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Architectures Logicielles',
+        description:
+          'Panorama des patterns architecturaux fondamentaux : Clean Architecture, Hexagonale, Microservices, Event-Driven, DDD et plus. Guide de reference en francais.',
+        inLanguage: 'fr',
+        url: 'https://architectures-logicielles.fr',
+      }),
     },
   ],
-  style: [
-    {
-      innerHTML: `
-        :root {
-          --bg: #0d0f14;
-          --surface: #13161e;
-          --border: #1e2330;
-          --accent: #e8c84a;
-          --accent2: #4ae8b0;
-          --accent3: #e84a7a;
-          --text: #d4d8e8;
-          --muted: #6a7090;
-          --white: #f0f2fa;
-        }
+})
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-          background: var(--bg);
-          color: var(--text);
-          font-family: 'DM Sans', sans-serif;
-          font-weight: 300;
-          line-height: 1.7;
-          min-height: 100vh;
-        }
-
-        body::before {
-          content: '';
-          position: fixed;
-          inset: 0;
-          background-image:
-            linear-gradient(rgba(232,200,74,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(232,200,74,0.03) 1px, transparent 1px);
-          background-size: 40px 40px;
-          pointer-events: none;
-          z-index: 0;
-        }
-      `,
-    },
-  ],
+useSeoMeta({
+  title: 'Panorama complet',
+  description:
+    'Panorama des patterns architecturaux fondamentaux : Clean Architecture, Hexagonale, Microservices, Event-Driven, DDD et plus. Guide de reference en francais.',
+  ogTitle: 'Les grandes architectures logicielles',
+  ogDescription:
+    'Panorama des patterns architecturaux fondamentaux : Clean Architecture, Hexagonale, Microservices, Event-Driven, DDD et plus. Guide de reference en francais.',
+  ogType: 'website',
+  ogLocale: 'fr_FR',
+  ogUrl: 'https://architectures-logicielles.fr',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Les grandes architectures logicielles',
+  twitterDescription:
+    'Panorama des patterns architecturaux fondamentaux : Clean Architecture, Hexagonale, Microservices, Event-Driven, DDD et plus. Guide de reference en francais.',
 })
 </script>
 

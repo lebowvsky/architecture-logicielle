@@ -530,70 +530,40 @@ const fileTreeHtml = `<span class="ft-gray">src/</span>
 <span class="ft-orange">        \u2514\u2500\u2500 CommandeModule.ts</span>              <span class="ft-gray">// @Module \u2014 DI bindings</span>`
 
 useHead({
-  htmlAttrs: {
-    lang: 'fr',
-  },
-  title: 'Onion Architecture \u2014 Jeffrey Palermo & Uncle Bob',
-  link: [
+  title: 'Onion Architecture \u2014 Jeffrey Palermo',
+  script: [
     {
-      rel: 'preconnect',
-      href: 'https://fonts.googleapis.com',
-    },
-    {
-      rel: 'preconnect',
-      href: 'https://fonts.gstatic.com',
-      crossorigin: '',
-    },
-    {
-      rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap',
-    },
-  ],
-  style: [
-    {
-      innerHTML: `
-        :root {
-          --bg: #0d0f14;
-          --surface: #13161e;
-          --border: #1e2330;
-          --accent: #e8c84a;
-          --accent2: #4ae8b0;
-          --accent3: #e84a7a;
-          --text: #d4d8e8;
-          --muted: #6a7090;
-          --white: #f0f2fa;
-          --green: #4ae8b0;
-          --purple: #a78bfa;
-          --blue: #4a9ee8;
-          --orange: #e87a4a;
-          --red: #e84a7a;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-          background: var(--bg);
-          color: var(--text);
-          font-family: 'DM Sans', sans-serif;
-          font-weight: 300;
-          line-height: 1.7;
-          min-height: 100vh;
-        }
-
-        body::before {
-          content: '';
-          position: fixed;
-          inset: 0;
-          background-image:
-            linear-gradient(rgba(232,200,74,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(232,200,74,0.03) 1px, transparent 1px);
-          background-size: 40px 40px;
-          pointer-events: none;
-          z-index: 0;
-        }
-      `,
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: 'Onion Architecture \u2014 Jeffrey Palermo',
+        description:
+          'Onion Architecture de Jeffrey Palermo : couches concentriques, Domain Model, Domain Services, comparaison avec Clean Architecture, exemples NestJS/TypeScript.',
+        inLanguage: 'fr',
+        url: 'https://architectures-logicielles.fr/onion-architecture',
+        author: {
+          '@type': 'Person',
+          name: 'Jeffrey Palermo',
+        },
+      }),
     },
   ],
+})
+
+useSeoMeta({
+  description:
+    'Onion Architecture de Jeffrey Palermo : couches concentriques, Domain Model, Domain Services, comparaison avec Clean Architecture, exemples NestJS/TypeScript.',
+  ogTitle: 'Onion Architecture \u2014 Jeffrey Palermo & Uncle Bob',
+  ogDescription:
+    'Onion Architecture de Jeffrey Palermo : couches concentriques, Domain Model, Domain Services, comparaison avec Clean Architecture, exemples NestJS/TypeScript.',
+  ogType: 'article',
+  ogLocale: 'fr_FR',
+  ogUrl: 'https://architectures-logicielles.fr/onion-architecture',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Onion Architecture \u2014 Jeffrey Palermo & Uncle Bob',
+  twitterDescription:
+    'Onion Architecture de Jeffrey Palermo : couches concentriques, Domain Model, Domain Services, comparaison avec Clean Architecture, exemples NestJS/TypeScript.',
 })
 </script>
 

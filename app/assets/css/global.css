@@ -1,0 +1,43 @@
+:root {
+  --bg: #0d0f14;
+  --surface: #13161e;
+  --border: #1e2330;
+  --accent: #e8c84a;
+  --accent2: #4ae8b0;
+  --accent3: #e84a7a;
+  --text: #d4d8e8;
+  --muted: #6a7090;
+  --white: #f0f2fa;
+  --green: #4ae8b0;
+  --purple: #a78bfa;
+  --blue: #4a9ee8;
+  --orange: #e87a4a;
+  --red: #e84a7a;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(232, 200, 74, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 200, 74, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
