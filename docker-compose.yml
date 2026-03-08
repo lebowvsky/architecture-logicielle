@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+      target: prod
+    ports:
+      - "3000:3000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+      - NODE_ENV=production
+      - NUXT_APP_BASE_URL=https://architecture-logicielle.lebowvsky.com
+    restart: unless-stopped
