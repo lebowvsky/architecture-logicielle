@@ -95,6 +95,7 @@ const categories: Category[] = [
         description:
           "Le domaine au centre communique via des Ports (interfaces). Les Adapters impl\u00e9mentent ces ports pour le monde ext\u00e9rieur (HTTP, DB, Queue\u2026). Invent\u00e9e par Alistair Cockburn. Parfait pour la testabilit\u00e9\u00a0: le domaine ne conna\u00eet rien de l\u2019ext\u00e9rieur.",
         tags: ['Ports', 'Adapters', 'Testabilit\u00e9', 'Cockburn'],
+        slug: 'hexagonal-architecture',
       },
       {
         icon: '\u{1F4E6}',
