@@ -54,6 +54,7 @@ const categories: Category[] = [
           "Organisation en couches horizontales\u00a0: Pr\u00e9sentation \u2192 Logique M\u00e9tier \u2192 Acc\u00e8s aux donn\u00e9es \u2192 Base de donn\u00e9es. Uncle Bob critique le fait que les couches inf\u00e9rieures dictent souvent les couches sup\u00e9rieures \u2014 le sch\u00e9ma DB ne doit pas dicter les entit\u00e9s m\u00e9tier.",
         tags: ['3-Tier', 'MVC', 'S\u00e9paration concerns'],
         quote: '\u00ab\u00a0Les d\u00e9tails doivent d\u00e9pendre des politiques, jamais l\u2019inverse.\u00a0\u00bb',
+        slug: 'layered-architecture',
       },
       {
         icon: '\u{1F3AD}',
