@@ -44,6 +44,7 @@ const categories: Category[] = [
         description:
           'Tout le syst\u00e8me est d\u00e9ploy\u00e9 comme une seule unit\u00e9. Simple \u00e0 d\u00e9velopper initialement, difficile \u00e0 faire \u00e9voluer \u00e0 grande \u00e9chelle. La m\u00e9taphore\u00a0: un bloc de pierre \u2014 solide, mais sculptez-en une partie et vous risquez de tout fissurer.',
         tags: ['D\u00e9ploiement unique', 'Base de code unifi\u00e9e', 'Simple'],
+        slug: 'monolithic-architecture',
       },
       {
         icon: '\u{1F370}',
