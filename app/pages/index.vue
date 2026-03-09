@@ -63,6 +63,7 @@ const categories: Category[] = [
         description:
           "S\u00e9paration de la vue, du mod\u00e8le et du contr\u00f4leur/pr\u00e9senteur/viewmodel. Patterns de pr\u00e9sentation plut\u00f4t qu\u2019architecturaux au sens strict, mais fondamentaux dans la structuration du code d\u2019interface.",
         tags: ['Model', 'View', 'Controller', 'Presenter'],
+        slug: 'presentation-patterns',
       },
     ],
   },
