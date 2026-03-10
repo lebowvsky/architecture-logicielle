@@ -107,6 +107,7 @@ const categories: Category[] = [
         description:
           "Eric Evans. L\u2019architecture suit le domaine m\u00e9tier\u00a0: Bounded Contexts, Aggregates, Entities, Value Objects, Domain Events. Ubiquitous Language\u00a0: le code parle le m\u00eame langage que les experts m\u00e9tier. Souvent combin\u00e9 avec Hexagonale ou Clean.",
         tags: ['Bounded Context', 'Aggregate', 'Domain Events', 'Evans'],
+        slug: 'ddd-architecture',
       },
     ],
   },
