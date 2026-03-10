@@ -310,6 +310,20 @@ useSeoMeta({
       </div>
     </div>
 
+    <!-- Decision Tree CTA -->
+    <NuxtLink to="/decision-tree" class="decision-tree-cta">
+      <div class="cta-icon">🌳</div>
+      <div class="cta-content">
+        <h3>Arbre de d&eacute;cision architectural</h3>
+        <p>
+          Pas s&ucirc;r de quelle architecture choisir&nbsp;? R&eacute;pondez &agrave; 5 questions
+          couvrant stade, domaine, organisation, NFR et co&ucirc;t du changement pour obtenir une
+          recommandation personnalis&eacute;e.
+        </p>
+      </div>
+      <span class="cta-arrow">&rarr;</span>
+    </NuxtLink>
+
     <!-- Category sections -->
     <section
       v-for="category in categories"
@@ -441,6 +455,51 @@ h1 em {
   font-size: 1rem;
   color: var(--muted);
   max-width: 520px;
+}
+
+/* Decision Tree CTA */
+.decision-tree-cta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(135deg, rgba(74, 232, 176, 0.06), rgba(232, 200, 74, 0.04));
+  border: 1px solid rgba(74, 232, 176, 0.2);
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin-bottom: 56px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.decision-tree-cta:hover {
+  border-color: rgba(74, 232, 176, 0.5);
+  transform: translateY(-2px);
+}
+
+.cta-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+}
+
+.cta-content h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: var(--accent2);
+  margin-bottom: 6px;
+}
+
+.cta-content p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.cta-arrow {
+  font-size: 1.5rem;
+  color: var(--accent2);
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 /* Category sections */
