@@ -123,6 +123,7 @@ const categories: Category[] = [
         description:
           "Services r\u00e9utilisables communiquant via un ESB (Enterprise Service Bus). Pr\u00e9curseur des microservices, souvent plus lourd. Populaire dans les grandes entreprises ann\u00e9es 2000. L\u2019ESB peut devenir un point de d\u00e9faillance unique.",
         tags: ['ESB', 'WSDL', 'SOAP', 'Enterprise'],
+        slug: 'soa',
       },
       {
         icon: '\u{1F52C}',
