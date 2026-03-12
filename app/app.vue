@@ -1,7 +1,9 @@
 <template>
-  <div>
+  <div class="app-root">
     <NuxtRouteAnnouncer />
-    <NuxtPage />
+    <main class="app-content">
+      <NuxtPage />
+    </main>
 
     <!-- Site-wide footer -->
     <footer class="site-footer">
@@ -50,7 +52,18 @@
 </template>
 
 <style>
+.app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-content {
+  flex: 1 0 auto;
+}
+
 .site-footer {
+  flex-shrink: 0;
   position: relative;
   z-index: 1;
   padding: 0 32px 40px;
