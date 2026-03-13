@@ -142,6 +142,7 @@ const categories: Category[] = [
         description:
           "Fonctions d\u00e9ploy\u00e9es \u00e0 la demande (AWS Lambda, Azure Functions). L\u2019infrastructure est totalement abstraite. Facturation \u00e0 l\u2019usage. Id\u00e9al pour les charges variables. Limite\u00a0: cold starts, \u00e9tat difficile \u00e0 g\u00e9rer, vendor lock-in.",
         tags: ['Lambda', 'Event-driven', 'Pay-per-use', 'Stateless'],
+        slug: 'serverless-architecture',
       },
     ],
   },

@@ -2,9 +2,10 @@
 /**
  * @pattern Factory Pattern (Creational)
  * @category Creational
- * @purpose Repeated data structures (intro cards, gateway cards, service cards, trap cards,
- *          comparison tables, flow steps) are modeled as typed arrays and rendered via v-for,
- *          while unique prose, SVG diagrams, and code blocks stay as direct template markup.
+ * @purpose Repeated data structures (comparison cards, service cards, piege cards,
+ *          flow steps, decision table rows, sidebar groups) are modeled as typed arrays
+ *          and rendered via v-for, while unique prose, SVG diagrams, and code blocks
+ *          stay as direct template markup with v-html.
  */
 
 interface NavLink {
@@ -17,14 +18,31 @@ interface NavGroup {
   links: NavLink[]
 }
 
-interface MsCard {
-  colorClass: string
+interface ComparisonCard {
   icon: string
+  colorClass: string
+  name: string
   title: string
-  body: string
+  desc: string
 }
 
-interface CompareRow {
+interface ServiceCard {
+  icon: string
+  colorClass: string
+  name: string
+  title: string
+  desc: string
+}
+
+interface GatewayOption {
+  icon: string
+  colorClass: string
+  name: string
+  title: string
+  desc: string
+}
+
+interface GatewayRow {
   feature: string
   nginx: string
   nginxClass: string
@@ -36,7 +54,7 @@ interface CompareRow {
   nestjsClass: string
 }
 
-interface BrokerCompareRow {
+interface BrokerRow {
   criteria: string
   rabbitmq: string
   rabbitmqClass?: string
@@ -45,15 +63,31 @@ interface BrokerCompareRow {
 }
 
 interface FlowStep {
-  numClass?: string
+  num: string
+  numStyle?: string
   text: string
 }
+
+interface PiegeCard {
+  icon: string
+  name: string
+  title: string
+  desc: string
+}
+
+interface MetaTag {
+  label: string
+  colorClass: string
+}
+
+/* ── Sidebar ── */
 
 const sidebarGroups: NavGroup[] = [
   {
     label: 'Introduction',
     links: [
       { id: 'intro', label: 'Monolithe vs microservices' },
+      { id: 'metaphore', label: 'La m\u00e9taphore' },
     ],
   },
   {
@@ -61,8 +95,8 @@ const sidebarGroups: NavGroup[] = [
     links: [
       { id: 'architecture', label: "Vue d'ensemble" },
       { id: 'gateway', label: 'API Gateway' },
-      { id: 'gateway-code', label: 'Gateway en NestJS' },
       { id: 'nginx', label: 'Nginx vs NestJS' },
+      { id: 'gateway-code', label: 'Gateway en NestJS' },
     ],
   },
   {
@@ -89,132 +123,178 @@ const sidebarGroups: NavGroup[] = [
   },
 ]
 
-const introCards: MsCard[] = [
+/* ── Meta tags ── */
+
+const metaTags: MetaTag[] = [
+  { label: 'NestJS', colorClass: 'meta-green' },
+  { label: 'TypeScript', colorClass: 'meta-green' },
+  { label: 'RabbitMQ', colorClass: 'meta-yellow' },
+  { label: 'Docker', colorClass: 'meta-blue' },
+  { label: 'Nginx', colorClass: 'meta-purple' },
+  { label: 'Distributed Systems', colorClass: 'meta-orange' },
+]
+
+/* ── Section 01 — Comparison cards ── */
+
+const comparisonCards: ComparisonCard[] = [
   {
-    colorClass: 'coral',
-    icon: 'MONOLITHE',
+    icon: '\u{1F9F1}',
+    colorClass: 'pink',
+    name: 'Monolithe',
     title: 'Tout dans une seule app',
-    body: "D\u00e9ploiement unique. Si la cuisine prend feu, tout l'h\u00f4tel ferme. Agrandir une salle n\u00e9cessite de r\u00e9nover tout le b\u00e2timent.",
+    desc: "D\u00e9ploiement unique. Si la cuisine prend feu, tout l'h\u00f4tel ferme. Agrandir une salle n\u00e9cessite de r\u00e9nover tout le b\u00e2timent.",
   },
   {
-    colorClass: 'teal',
-    icon: 'MICROSERVICES',
+    icon: '\u{1F3D9}\uFE0F',
+    colorClass: 'green',
+    name: 'Microservices',
     title: 'Services ind\u00e9pendants',
-    body: "Chaque commerce est autonome, a sa propre adresse, sa propre \u00e9quipe, peut ouvrir/fermer sans affecter les voisins.",
+    desc: "Chaque commerce est autonome, a sa propre adresse, sa propre \u00e9quipe, peut ouvrir/fermer sans affecter les voisins.",
   },
 ]
 
-const gatewayCards: MsCard[] = [
+/* ── Section 04 — Gateway options ── */
+
+const gatewayOptions: GatewayOption[] = [
   {
-    colorClass: 'amber',
-    icon: 'OPTION A',
+    icon: '\u2699\uFE0F',
+    colorClass: 'yellow',
+    name: 'Option A',
     title: 'Outil d\u00e9di\u00e9 \u2014 Kong / Nginx',
-    body: "Configuration d\u00e9clarative YAML. Z\u00e9ro code m\u00e9tier. Id\u00e9al quand on veut moins de choses \u00e0 maintenir.",
+    desc: 'Configuration d\u00e9clarative YAML. Z\u00e9ro code m\u00e9tier. Id\u00e9al quand on veut moins de choses \u00e0 maintenir.',
   },
   {
+    icon: '\u{1F527}',
     colorClass: 'purple',
-    icon: 'OPTION B',
+    name: 'Option B',
     title: 'Application NestJS custom',
-    body: "Code TypeScript complet. Guards, Interceptors, Pipes. Id\u00e9al pour la logique m\u00e9tier fine au niveau du routing.",
+    desc: 'Code TypeScript complet. Guards, Interceptors, Pipes. Id\u00e9al pour la logique m\u00e9tier fine au niveau du routing.',
   },
 ]
 
-const serviceCards: MsCard[] = [
+const gatewayRows: GatewayRow[] = [
+  { feature: 'Reverse proxy / routing', nginx: '\u2713', nginxClass: 'dt-ok', kong: '\u2713', kongClass: 'dt-ok', aws: '\u2713', awsClass: 'dt-ok', nestjs: '\u2713', nestjsClass: 'dt-ok' },
+  { feature: 'TLS / HTTPS termination', nginx: '\u2713', nginxClass: 'dt-ok', kong: '\u2713', kongClass: 'dt-ok', aws: '\u2713', awsClass: 'dt-ok', nestjs: '\u2713', nestjsClass: 'dt-ok' },
+  { feature: 'Rate limiting', nginx: 'basique', nginxClass: 'dt-warn', kong: '\u2713', kongClass: 'dt-ok', aws: '\u2713', awsClass: 'dt-ok', nestjs: '\u2713', nestjsClass: 'dt-ok' },
+  { feature: 'Auth JWT / OAuth', nginx: '\u2717', nginxClass: 'dt-no', kong: 'plugin', kongClass: 'dt-warn', aws: '\u2713', awsClass: 'dt-ok', nestjs: '\u2713 Guard', nestjsClass: 'dt-ok' },
+  { feature: 'Logique m\u00e9tier custom', nginx: '\u2717', nginxClass: 'dt-no', kong: 'limit\u00e9', kongClass: 'dt-warn', aws: 'limit\u00e9', awsClass: 'dt-warn', nestjs: '\u2713 full TS', nestjsClass: 'dt-ok' },
+  { feature: 'Maintenance / ops', nginx: 'simple', nginxClass: 'dt-ok', kong: 'mod\u00e9r\u00e9e', kongClass: 'dt-warn', aws: 'mod\u00e9r\u00e9e', awsClass: 'dt-warn', nestjs: 'tu g\u00e8res tout', nestjsClass: 'dt-no' },
+]
+
+/* ── Section 07 — Service cards ── */
+
+const serviceCards: ServiceCard[] = [
   {
-    colorClass: 'coral',
-    icon: 'NE FAIT PAS',
+    icon: '\u{1F6AB}',
+    colorClass: 'pink',
+    name: 'Ne fait pas',
     title: "Pas d'auth, pas de JWT",
-    body: "Il fait confiance au header <code>x-user-id</code> inject\u00e9 par le Gateway. L'auth est d\u00e9j\u00e0 v\u00e9rifi\u00e9e en amont.",
+    desc: "Il fait confiance au header x-user-id inject\u00e9 par le Gateway. L'auth est d\u00e9j\u00e0 v\u00e9rifi\u00e9e en amont.",
   },
   {
-    colorClass: 'coral',
-    icon: 'NE FAIT PAS',
+    icon: '\u{1F6AB}',
+    colorClass: 'pink',
+    name: 'Ne fait pas',
     title: "Pas d'import d'autres services",
-    body: "Jamais <code>import CatalogueService</code>. La communication passe par HTTP ou par events \u2014 jamais par import direct.",
+    desc: "Jamais import CatalogueService. La communication passe par HTTP ou par events \u2014 jamais par import direct.",
   },
   {
-    colorClass: 'teal',
-    icon: 'FAIT',
+    icon: '\u2705',
+    colorClass: 'green',
+    name: 'Fait',
     title: 'Sa propre base de donn\u00e9es',
-    body: "Chaque service poss\u00e8de sa DB isol\u00e9e. Le service Auth peut changer son sch\u00e9ma sans casser les autres.",
+    desc: 'Chaque service poss\u00e8de sa DB isol\u00e9e. Le service Auth peut changer son sch\u00e9ma sans casser les autres.',
   },
   {
-    colorClass: 'teal',
-    icon: 'FAIT',
+    icon: '\u2705',
+    colorClass: 'green',
+    name: 'Fait',
     title: '\u00c9met des events',
-    body: "Apr\u00e8s chaque action importante, il publie un event sur le broker. Il ne sait pas qui l'\u00e9coutera.",
+    desc: "Apr\u00e8s chaque action importante, il publie un event sur le broker. Il ne sait pas qui l'\u00e9coutera.",
   },
 ]
 
-const trapCards: MsCard[] = [
-  {
-    colorClass: 'coral',
-    icon: 'PI\u00c8GE 01',
-    title: 'Explosion de la complexit\u00e9 ops',
-    body: "Tu \u00e9changes les bugs de code contre des bugs r\u00e9seau et de configuration distribu\u00e9e. Chaque service = un processus, une DB, une config \u00e0 monitorer.",
-  },
-  {
-    colorClass: 'coral',
-    icon: 'PI\u00c8GE 02',
-    title: 'Transactions distribu\u00e9es',
-    body: "Sans transaction ACID multi-services, tu dois impl\u00e9menter des patterns comme <strong>SAGA</strong> ou <strong>2PC</strong>. C'est complexe et source d'incoh\u00e9rences.",
-  },
-  {
-    colorClass: 'coral',
-    icon: 'PI\u00c8GE 03',
-    title: 'Latence en cascade',
-    body: "5 appels HTTP synchrones en cha\u00eene = 5\u00d7 les d\u00e9lais r\u00e9seau. Un service lent d\u00e9grade toute la cha\u00eene sans circuit breaker.",
-  },
-  {
-    colorClass: 'coral',
-    icon: 'PI\u00c8GE 04',
-    title: 'Death star diagram',
-    body: "Quand chaque service appelle tous les autres sans discipline, tu recr\u00e9\u00e9s un monolithe distribu\u00e9 \u2014 le pire des deux mondes.",
-  },
-]
+/* ── Section 09 — Broker comparison ── */
 
-const gatewayCompare: CompareRow[] = [
-  { feature: 'Reverse proxy / routing', nginx: '\u2713', nginxClass: 'check', kong: '\u2713', kongClass: 'check', aws: '\u2713', awsClass: 'check', nestjs: '\u2713', nestjsClass: 'check' },
-  { feature: 'TLS / HTTPS termination', nginx: '\u2713', nginxClass: 'check', kong: '\u2713', kongClass: 'check', aws: '\u2713', awsClass: 'check', nestjs: '\u2713', nestjsClass: 'check' },
-  { feature: 'Rate limiting', nginx: 'basique', nginxClass: 'partial', kong: '\u2713', kongClass: 'check', aws: '\u2713', awsClass: 'check', nestjs: '\u2713', nestjsClass: 'check' },
-  { feature: 'Auth JWT / OAuth', nginx: '\u2717', nginxClass: 'cross', kong: 'plugin', kongClass: 'partial', aws: '\u2713', awsClass: 'check', nestjs: '\u2713 Guard', nestjsClass: 'check' },
-  { feature: 'Logique m\u00e9tier custom', nginx: '\u2717', nginxClass: 'cross', kong: 'limit\u00e9', kongClass: 'partial', aws: 'limit\u00e9', awsClass: 'partial', nestjs: '\u2713 full TS', nestjsClass: 'check' },
-  { feature: 'Maintenance / ops', nginx: 'simple', nginxClass: 'check', kong: 'mod\u00e9r\u00e9e', kongClass: 'partial', aws: 'mod\u00e9r\u00e9e', awsClass: 'partial', nestjs: 'tu g\u00e8res tout', nestjsClass: 'cross' },
-]
-
-const brokerCompare: BrokerCompareRow[] = [
+const brokerRows: BrokerRow[] = [
   { criteria: 'Mod\u00e8le', rabbitmq: 'Queue \u2014 message supprim\u00e9 apr\u00e8s lecture', kafka: 'Log \u2014 message conserv\u00e9, offset par consommateur' },
   { criteria: 'Volume', rabbitmq: 'Des milliers de msg/s', kafka: 'Des millions de msg/s' },
-  { criteria: 'Replay', rabbitmq: 'Non', rabbitmqClass: 'cross', kafka: 'Oui \u2014 rejouer l\'historique', kafkaClass: 'check' },
-  { criteria: 'Complexit\u00e9 ops', rabbitmq: 'Simple', rabbitmqClass: 'check', kafka: '\u00c9lev\u00e9e (ZooKeeper/KRaft)', kafkaClass: 'partial' },
+  { criteria: 'Replay', rabbitmq: 'Non', rabbitmqClass: 'dt-no', kafka: 'Oui \u2014 rejouer l\u2019historique', kafkaClass: 'dt-ok' },
+  { criteria: 'Complexit\u00e9 ops', rabbitmq: 'Simple', rabbitmqClass: 'dt-ok', kafka: '\u00c9lev\u00e9e (ZooKeeper/KRaft)', kafkaClass: 'dt-warn' },
   { criteria: "Cas d'usage", rabbitmq: 'Projets standards, microservices classiques', kafka: 'Analytics, event sourcing, tr\u00e8s haut volume' },
 ]
 
+/* ── Section 12 — Flow steps ── */
+
 const flowSteps: FlowStep[] = [
-  { text: "<strong>Projet solo ou petite \u00e9quipe (&lt;5 personnes)</strong> \u2014 reste sur le monolithe. La complexit\u00e9 op\u00e9rationnelle des microservices est disproportionn\u00e9e." },
-  { numClass: 'teal', text: "<strong>\u00c9quipes qui grossissent</strong> \u2014 le monolithe devient un goulot organisationnel autant que technique. Les \u00e9quipes se bloquent mutuellement au d\u00e9ploiement." },
-  { numClass: 'amber', text: "<strong>Besoin de scalabilit\u00e9 diff\u00e9renci\u00e9e</strong> \u2014 Netflix scale son service streaming \u00d7100 sans toucher \u00e0 la facturation. Impossible en monolithe." },
-  { numClass: 'coral', text: "<strong>D\u00e9ploiement continu \u00e0 grande \u00e9chelle</strong> \u2014 Amazon d\u00e9ploie en production des milliers de fois par jour. Chaque \u00e9quipe pousse son service ind\u00e9pendamment." },
+  {
+    num: '1',
+    text: '<strong>Projet solo ou petite \u00e9quipe (&lt;5 personnes)</strong> \u2014 reste sur le monolithe. La complexit\u00e9 op\u00e9rationnelle des microservices est disproportionn\u00e9e.',
+  },
+  {
+    num: '2',
+    numStyle: 'background: var(--cyan, #22d3ee); color: var(--bg);',
+    text: '<strong>\u00c9quipes qui grossissent</strong> \u2014 le monolithe devient un goulot organisationnel autant que technique. Les \u00e9quipes se bloquent mutuellement au d\u00e9ploiement.',
+  },
+  {
+    num: '3',
+    numStyle: 'background: var(--accent);',
+    text: '<strong>Besoin de scalabilit\u00e9 diff\u00e9renci\u00e9e</strong> \u2014 Netflix scale son service streaming \u00d7100 sans toucher \u00e0 la facturation. Impossible en monolithe.',
+  },
+  {
+    num: '4',
+    numStyle: 'background: var(--orange);',
+    text: '<strong>D\u00e9ploiement continu \u00e0 grande \u00e9chelle</strong> \u2014 Amazon d\u00e9ploie en production des milliers de fois par jour. Chaque \u00e9quipe pousse son service ind\u00e9pendamment.',
+  },
 ]
 
-/* ── Code blocks ── */
+/* ── Section 13 — Pieges cards ── */
 
-const codeNginx = `<span class="cmt"># Nginx comme API Gateway basique</span>
+const piegeCards: PiegeCard[] = [
+  {
+    icon: '\u{1F4A5}',
+    name: 'Pi\u00e8ge 01',
+    title: 'Explosion de la complexit\u00e9 ops',
+    desc: 'Tu \u00e9changes les bugs de code contre des bugs r\u00e9seau et de configuration distribu\u00e9e. Chaque service = un processus, une DB, une config \u00e0 monitorer.',
+  },
+  {
+    icon: '\u{1F504}',
+    name: 'Pi\u00e8ge 02',
+    title: 'Transactions distribu\u00e9es',
+    desc: "Sans transaction ACID multi-services, tu dois impl\u00e9menter des patterns comme <strong>SAGA</strong> ou <strong>2PC</strong>. C'est complexe et source d'incoh\u00e9rences.",
+  },
+  {
+    icon: '\u23F1\uFE0F',
+    name: 'Pi\u00e8ge 03',
+    title: 'Latence en cascade',
+    desc: "5 appels HTTP synchrones en cha\u00eene = 5\u00d7 les d\u00e9lais r\u00e9seau. Un service lent d\u00e9grade toute la cha\u00eene sans circuit breaker.",
+  },
+  {
+    icon: '\u{1F480}',
+    name: 'Pi\u00e8ge 04',
+    title: 'Death star diagram',
+    desc: "Quand chaque service appelle tous les autres sans discipline, tu recr\u00e9\u00e9s un monolithe distribu\u00e9 \u2014 le pire des deux mondes.",
+  },
+]
+
+/* ── Code blocks (v-html) ── */
+
+const codeNginx = `<span class="cm"># Nginx comme API Gateway basique</span>
 http {
-  <span class="cmt"># Rate limiting : max 10 req/s par IP</span>
+  <span class="cm"># Rate limiting : max 10 req/s par IP</span>
   <span class="kw">limit_req_zone</span> $binary_remote_addr <span class="fn">zone</span>=api:10m <span class="fn">rate</span>=<span class="num">10r/s</span>;
 
   server {
     <span class="kw">listen</span> <span class="num">80</span>;
 
-    <span class="cmt"># /orders/** \u2192 service Commandes</span>
+    <span class="cm"># /orders/** \u2192 service Commandes</span>
     <span class="kw">location</span> /orders/ {
       <span class="kw">limit_req</span> <span class="fn">zone</span>=api <span class="fn">burst</span>=<span class="num">20</span>;
-      <span class="kw">proxy_pass</span> <span class="str">http://orders-service:3001</span>; <span class="cmt">\u2190 reverse proxy</span>
+      <span class="kw">proxy_pass</span> <span class="str">http://orders-service:3001</span>; <span class="cm">\u2190 reverse proxy</span>
       <span class="kw">proxy_set_header</span> X-Real-IP $remote_addr;
     }
 
-    <span class="cmt"># /users/** \u2192 service Users</span>
+    <span class="cm"># /users/** \u2192 service Users</span>
     <span class="kw">location</span> /users/ {
       <span class="kw">proxy_pass</span> <span class="str">http://users-service:3002</span>;
     }
@@ -222,24 +302,24 @@ http {
 }`
 
 const codeGatewayController = `<span class="dec">@Controller</span>()
-<span class="kw">export class</span> <span class="cls">GatewayController</span> {
-  <span class="kw">constructor</span>(<span class="kw">private readonly</span> proxy: <span class="cls">ProxyService</span>) {}
+<span class="kw">export class</span> <span class="ty">GatewayController</span> {
+  <span class="kw">constructor</span>(<span class="kw">private readonly</span> proxy: <span class="ty">ProxyService</span>) {}
 
   <span class="dec">@All</span>(<span class="str">'orders/*'</span>)
-  <span class="dec">@UseGuards</span>(<span class="cls">AuthGuard</span>)   <span class="cmt">// v\u00e9rifie JWT \u2014 seul endroit o\u00f9 c'est fait</span>
-  <span class="dec">@UseInterceptors</span>(<span class="cls">LoggingInterceptor</span>)
+  <span class="dec">@UseGuards</span>(<span class="ty">AuthGuard</span>)   <span class="cm">// v\u00e9rifie JWT \u2014 seul endroit o\u00f9 c'est fait</span>
+  <span class="dec">@UseInterceptors</span>(<span class="ty">LoggingInterceptor</span>)
   <span class="kw">async</span> <span class="fn">proxyOrders</span>(
-    <span class="dec">@Req</span>() req: <span class="cls">Request</span>,
-    <span class="dec">@Res</span>() res: <span class="cls">Response</span>,
-    <span class="dec">@User</span>() user: <span class="cls">JwtPayload</span>,
+    <span class="dec">@Req</span>() req: <span class="ty">Request</span>,
+    <span class="dec">@Res</span>() res: <span class="ty">Response</span>,
+    <span class="dec">@User</span>() user: <span class="ty">JwtPayload</span>,
   ) {
     <span class="kw">return</span> <span class="kw">this</span>.proxy.<span class="fn">forward</span>(req, res, {
       target: <span class="str">'http://orders-service:3001'</span>,
-      headers: { <span class="str">'x-user-id'</span>: user.id }, <span class="cmt">// enrichit la requ\u00eate</span>
+      headers: { <span class="str">'x-user-id'</span>: user.id }, <span class="cm">// enrichit la requ\u00eate</span>
     });
   }
 
-  <span class="dec">@Post</span>(<span class="str">'auth/login'</span>) <span class="cmt">// route publique \u2014 pas de Guard</span>
+  <span class="dec">@Post</span>(<span class="str">'auth/login'</span>) <span class="cm">// route publique \u2014 pas de Guard</span>
   <span class="kw">async</span> <span class="fn">login</span>(<span class="dec">@Req</span>() req, <span class="dec">@Res</span>() res) {
     <span class="kw">return</span> <span class="kw">this</span>.proxy.<span class="fn">forward</span>(req, res, {
       target: <span class="str">'http://auth-service:3003'</span>,
@@ -248,100 +328,100 @@ const codeGatewayController = `<span class="dec">@Controller</span>()
 }`
 
 const codeAuthGuard = `<span class="dec">@Injectable</span>()
-<span class="kw">export class</span> <span class="cls">AuthGuard</span> <span class="kw">implements</span> <span class="cls">CanActivate</span> {
-  <span class="kw">constructor</span>(<span class="kw">private</span> jwt: <span class="cls">JwtService</span>) {}
+<span class="kw">export class</span> <span class="ty">AuthGuard</span> <span class="kw">implements</span> <span class="ty">CanActivate</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> jwt: <span class="ty">JwtService</span>) {}
 
-  <span class="fn">canActivate</span>(ctx: <span class="cls">ExecutionContext</span>): <span class="kw">boolean</span> {
+  <span class="fn">canActivate</span>(ctx: <span class="ty">ExecutionContext</span>): <span class="kw">boolean</span> {
     <span class="kw">const</span> req = ctx.<span class="fn">switchToHttp</span>().<span class="fn">getRequest</span>();
     <span class="kw">const</span> token = req.headers.authorization?.<span class="fn">split</span>(<span class="str">' '</span>)[<span class="num">1</span>];
-    <span class="kw">if</span> (!token) <span class="kw">throw new</span> <span class="cls">UnauthorizedException</span>();
+    <span class="kw">if</span> (!token) <span class="kw">throw new</span> <span class="ty">UnauthorizedException</span>();
 
     <span class="kw">try</span> {
-      <span class="cmt">// Gateway = SEUL point de v\u00e9rification JWT</span>
-      <span class="cmt">// Les services downstream font confiance \u00e0 x-user-id</span>
+      <span class="cm">// Gateway = SEUL point de v\u00e9rification JWT</span>
+      <span class="cm">// Les services downstream font confiance \u00e0 x-user-id</span>
       req.user = <span class="kw">this</span>.jwt.<span class="fn">verify</span>(token);
       <span class="kw">return true</span>;
     } <span class="kw">catch</span> {
-      <span class="kw">throw new</span> <span class="cls">UnauthorizedException</span>(<span class="str">'Invalid or expired token'</span>);
+      <span class="kw">throw new</span> <span class="ty">UnauthorizedException</span>(<span class="str">'Invalid or expired token'</span>);
     }
   }
 }`
 
-const codeOrderEntity = `<span class="dec">@Entity</span>(<span class="str">'orders'</span>)
-<span class="kw">export class</span> <span class="cls">Order</span> {
+const codeEntity = `<span class="dec">@Entity</span>(<span class="str">'orders'</span>)
+<span class="kw">export class</span> <span class="ty">Order</span> {
   <span class="dec">@PrimaryGeneratedColumn</span>(<span class="str">'uuid'</span>)
   id: <span class="kw">string</span>;
 
   <span class="dec">@Column</span>()
-  userId: <span class="kw">string</span>; <span class="cmt">// pas de FK vers User \u2014 juste l'ID</span>
+  userId: <span class="kw">string</span>; <span class="cm">// pas de FK vers User \u2014 juste l'ID</span>
 
   <span class="dec">@Column</span>(<span class="str">'jsonb'</span>)
-  items: <span class="cls">OrderItem</span>[];
+  items: <span class="ty">OrderItem</span>[];
 
-  <span class="dec">@Column</span>({ type: <span class="str">'enum'</span>, enum: <span class="cls">OrderStatus</span>, default: <span class="cls">OrderStatus</span>.PENDING })
-  status: <span class="cls">OrderStatus</span>;
+  <span class="dec">@Column</span>({ type: <span class="str">'enum'</span>, enum: <span class="ty">OrderStatus</span>, default: <span class="ty">OrderStatus</span>.PENDING })
+  status: <span class="ty">OrderStatus</span>;
 
   <span class="dec">@Column</span>(<span class="str">'decimal'</span>)
   total: <span class="kw">number</span>;
 }`
 
 const codeOrdersService = `<span class="dec">@Injectable</span>()
-<span class="kw">export class</span> <span class="cls">OrdersService</span> {
+<span class="kw">export class</span> <span class="ty">OrdersService</span> {
   <span class="kw">constructor</span>(
-    <span class="dec">@InjectRepository</span>(<span class="cls">Order</span>) <span class="kw">private readonly</span> repo: <span class="cls">Repository</span>&lt;<span class="cls">Order</span>&gt;,
-    <span class="kw">private readonly</span> events: <span class="cls">OrdersEventsService</span>,
+    <span class="dec">@InjectRepository</span>(<span class="ty">Order</span>) <span class="kw">private readonly</span> repo: <span class="ty">Repository</span>&lt;<span class="ty">Order</span>&gt;,
+    <span class="kw">private readonly</span> events: <span class="ty">OrdersEventsService</span>,
   ) {}
 
-  <span class="kw">async</span> <span class="fn">create</span>(dto: <span class="cls">CreateOrderDto</span>, userId: <span class="kw">string</span>): <span class="cls">Promise</span>&lt;<span class="cls">Order</span>&gt; {
-    <span class="kw">const</span> total = dto.items.<span class="fn">reduce</span>((sum, i) =&gt; sum + i.price * i.qty, <span class="num">0</span>);
+  <span class="kw">async</span> <span class="fn">create</span>(dto: <span class="ty">CreateOrderDto</span>, userId: <span class="kw">string</span>): <span class="ty">Promise</span>&lt;<span class="ty">Order</span>&gt; {
+    <span class="kw">const</span> total = dto.items.<span class="fn">reduce</span>((sum, i) => sum + i.price * i.qty, <span class="num">0</span>);
     <span class="kw">const</span> order = <span class="kw">await</span> <span class="kw">this</span>.repo.<span class="fn">save</span>(<span class="kw">this</span>.repo.<span class="fn">create</span>({ ...dto, userId, total }));
 
-    <span class="cmt">// fire-and-forget \u2014 on ne sait pas qui va consommer cet event</span>
+    <span class="cm">// fire-and-forget \u2014 on ne sait pas qui va consommer cet event</span>
     <span class="kw">await</span> <span class="kw">this</span>.events.<span class="fn">emit</span>(<span class="str">'order.created'</span>, {
       orderId: order.id, userId, total, items: dto.items,
     });
 
-    <span class="kw">return</span> order; <span class="cmt">// r\u00e9pond AVANT que Paiement ou Notifs aient trait\u00e9</span>
+    <span class="kw">return</span> order; <span class="cm">// r\u00e9pond AVANT que Paiement ou Notifs aient trait\u00e9</span>
   }
 }`
 
-const codeDockerCompose = `<span class="kw">services</span>:
+const codeDocker = `<span class="kw">services</span>:
   <span class="fn">orders-service</span>:
     build: ./orders-service
     <span class="kw">ports</span>:
-      - <span class="str">"3001:3001"</span>  <span class="cmt"># expose HTTP \u2014 re\u00e7oit du Gateway</span>
+      - <span class="str">"3001:3001"</span>  <span class="cm"># expose HTTP \u2014 re\u00e7oit du Gateway</span>
     environment:
       <span class="fn">RABBITMQ_URL</span>: <span class="str">amqp://rabbitmq:5672</span>
       <span class="fn">DB_HOST</span>: <span class="str">orders-db</span>
 
   <span class="fn">payments-service</span>:
     build: ./payments-service
-    <span class="cmt"># \u2190 pas de ports: \u2014 aucune exposition HTTP</span>
-    <span class="cmt">#   \u00e9coute uniquement RabbitMQ</span>
+    <span class="cm"># \u2190 pas de ports: \u2014 aucune exposition HTTP</span>
+    <span class="cm">#   \u00e9coute uniquement RabbitMQ</span>
     environment:
       <span class="fn">RABBITMQ_URL</span>: <span class="str">amqp://rabbitmq:5672</span>
 
   <span class="fn">orders-db</span>:
     image: <span class="str">postgres:16</span>
-    <span class="cmt"># DB priv\u00e9e \u2014 aucun autre service n'y a acc\u00e8s</span>`
+    <span class="cm"># DB priv\u00e9e \u2014 aucun autre service n'y a acc\u00e8s</span>`
 
-const codeOrdersEvents = `<span class="dec">@Injectable</span>()
-<span class="kw">export class</span> <span class="cls">OrdersEventsService</span> {
+const codeBrokerProducer = `<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="ty">OrdersEventsService</span> {
   <span class="kw">constructor</span>(
-    <span class="dec">@Inject</span>(<span class="str">'BROKER'</span>) <span class="kw">private readonly</span> client: <span class="cls">ClientProxy</span>,
+    <span class="dec">@Inject</span>(<span class="str">'BROKER'</span>) <span class="kw">private readonly</span> client: <span class="ty">ClientProxy</span>,
   ) {}
 
-  <span class="kw">async</span> <span class="fn">emit</span>(pattern: <span class="kw">string</span>, payload: <span class="kw">unknown</span>): <span class="cls">Promise</span>&lt;<span class="kw">void</span>&gt; {
-    <span class="cmt">// fire-and-forget : on n'attend pas de r\u00e9ponse</span>
+  <span class="kw">async</span> <span class="fn">emit</span>(pattern: <span class="kw">string</span>, payload: <span class="kw">unknown</span>): <span class="ty">Promise</span>&lt;<span class="kw">void</span>&gt; {
+    <span class="cm">// fire-and-forget : on n'attend pas de r\u00e9ponse</span>
     <span class="kw">this</span>.client.<span class="fn">emit</span>(pattern, payload);
   }
 }`
 
-const codePaymentsController = `<span class="dec">@Controller</span>()
-<span class="kw">export class</span> <span class="cls">PaymentsController</span> {
-  <span class="kw">constructor</span>(<span class="kw">private readonly</span> svc: <span class="cls">PaymentsService</span>) {}
+const codeBrokerConsumer = `<span class="dec">@Controller</span>()
+<span class="kw">export class</span> <span class="ty">PaymentsController</span> {
+  <span class="kw">constructor</span>(<span class="kw">private readonly</span> svc: <span class="ty">PaymentsService</span>) {}
 
-  <span class="cmt">// \u00e9coute l'event \u2014 sans rien changer dans orders-service</span>
+  <span class="cm">// \u00e9coute l'event \u2014 sans rien changer dans orders-service</span>
   <span class="dec">@EventPattern</span>(<span class="str">'order.created'</span>)
   <span class="kw">async</span> <span class="fn">handleOrderCreated</span>(
     <span class="dec">@Payload</span>() data: { orderId: <span class="kw">string</span>; userId: <span class="kw">string</span>; total: <span class="kw">number</span> },
@@ -350,26 +430,28 @@ const codePaymentsController = `<span class="dec">@Controller</span>()
   }
 }
 
-<span class="cmt">// notifications.controller.ts \u2014 \u00e9coute le M\u00caME event en parall\u00e8le</span>
+<span class="cm">// notifications.controller.ts \u2014 \u00e9coute le M\u00caME event en parall\u00e8le</span>
 <span class="dec">@EventPattern</span>(<span class="str">'order.created'</span>)
 <span class="kw">async</span> <span class="fn">handleOrderCreated</span>(<span class="dec">@Payload</span>() data) {
   <span class="kw">await</span> <span class="kw">this</span>.svc.<span class="fn">sendConfirmationEmail</span>(data);
 }`
 
-const codeMainTs = `<span class="kw">async function</span> <span class="fn">bootstrap</span>() {
-  <span class="cmt">// createMicroservice au lieu de create \u2192 \u00e9coute le broker, pas HTTP</span>
-  <span class="kw">const</span> app = <span class="kw">await</span> <span class="cls">NestFactory</span>.<span class="fn">createMicroservice</span>&lt;<span class="cls">MicroserviceOptions</span>&gt;(
-    <span class="cls">AppModule</span>,
+const codeBrokerMain = `<span class="kw">async function</span> <span class="fn">bootstrap</span>() {
+  <span class="cm">// createMicroservice au lieu de create \u2192 \u00e9coute le broker, pas HTTP</span>
+  <span class="kw">const</span> app = <span class="kw">await</span> <span class="ty">NestFactory</span>.<span class="fn">createMicroservice</span>&lt;<span class="ty">MicroserviceOptions</span>&gt;(
+    <span class="ty">AppModule</span>,
     {
-      transport: <span class="cls">Transport</span>.RMQ,
+      transport: <span class="ty">Transport</span>.RMQ,
       options: {
         urls: [process.env.RABBITMQ_URL],
         queue: <span class="str">'events_queue'</span>,
       },
     },
   );
-  <span class="kw">await</span> app.<span class="fn">listen</span>(); <span class="cmt">// tourne en permanence, aucun port expos\u00e9</span>
+  <span class="kw">await</span> app.<span class="fn">listen</span>(); <span class="cm">// tourne en permanence, aucun port expos\u00e9</span>
 }`
+
+/* ── SEO ── */
 
 useHead({
   title: 'Architecture Microservices \u2014 Guide Complet',
@@ -380,35 +462,42 @@ useHead({
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: 'Architecture Microservices \u2014 Guide Complet',
-        description: "Du monolithe au syst\u00e8me distribu\u00e9 : sch\u00e9mas, m\u00e9taphores et code NestJS pour comprendre l'architecture microservices.",
+        description:
+          'Du monolithe au syst\u00e8me distribu\u00e9 \u2014 sch\u00e9mas, m\u00e9taphores et code NestJS concret pour comprendre chaque composant : Gateway, services m\u00e9tier, Message Broker.',
         inLanguage: 'fr',
         url: 'https://architectures-logicielles.fr/microservices-architecture',
-        author: { '@type': 'Organization', name: 'Architectures Logicielles' },
+        author: [
+          { '@type': 'Person', name: 'Sam Newman' },
+          { '@type': 'Person', name: 'Martin Fowler' },
+        ],
       }),
     },
   ],
 })
 
 useSeoMeta({
-  description: "Du monolithe au syst\u00e8me distribu\u00e9 : sch\u00e9mas, m\u00e9taphores et code NestJS pour comprendre l'architecture microservices.",
+  description:
+    'Du monolithe au syst\u00e8me distribu\u00e9 \u2014 sch\u00e9mas, m\u00e9taphores et code NestJS concret pour comprendre chaque composant : Gateway, services m\u00e9tier, Message Broker.',
   ogTitle: 'Architecture Microservices \u2014 Guide Complet',
-  ogDescription: "Du monolithe au syst\u00e8me distribu\u00e9 : sch\u00e9mas, m\u00e9taphores et code NestJS pour comprendre l'architecture microservices.",
+  ogDescription:
+    'Du monolithe au syst\u00e8me distribu\u00e9 \u2014 sch\u00e9mas, m\u00e9taphores et code NestJS concret pour comprendre chaque composant : Gateway, services m\u00e9tier, Message Broker.',
   ogType: 'article',
   ogLocale: 'fr_FR',
   ogUrl: 'https://architectures-logicielles.fr/microservices-architecture',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Architecture Microservices \u2014 Guide Complet',
-  twitterDescription: "Du monolithe au syst\u00e8me distribu\u00e9 : sch\u00e9mas, m\u00e9taphores et code NestJS pour comprendre l'architecture microservices.",
+  twitterDescription:
+    'Du monolithe au syst\u00e8me distribu\u00e9 \u2014 sch\u00e9mas, m\u00e9taphores et code NestJS concret pour comprendre chaque composant : Gateway, services m\u00e9tier, Message Broker.',
 })
 </script>
 
 <template>
   <div class="page">
     <SideBar
-      eyebrow="Engineering handbook"
+      eyebrow="// Engineering Handbook"
       title="Architecture<br>Microservices"
       :groups="sidebarGroups"
-      accent-color="#4ade80"
+      accent-color="#e8c84a"
     />
 
     <main class="main">
@@ -416,697 +505,718 @@ useSeoMeta({
         <!-- Back link -->
         <nav>
           <NuxtLink to="/" class="back-link">
-            Retour aux architectures
+            Architectures Logicielles
           </NuxtLink>
         </nav>
 
-        <!-- Hero -->
-        <header class="hero">
-          <div class="hero-eyebrow">Architecture logicielle</div>
+        <!-- Header -->
+        <header>
+          <div class="eyebrow">// Architecture Distribu&eacute;e &mdash; Sam Newman &middot; Martin Fowler</div>
           <h1>Architecture<br><em>Microservices</em></h1>
-          <p class="hero-desc">Du monolithe au syst&egrave;me distribu&eacute; &mdash; sch&eacute;mas, m&eacute;taphores et code NestJS concret pour comprendre chaque composant.</p>
-          <div class="hero-meta">
-            <span class="hero-tag">NestJS</span>
-            <span class="hero-tag">TypeScript</span>
-            <span class="hero-tag">RabbitMQ</span>
-            <span class="hero-tag">Docker</span>
-            <span class="hero-tag">Nginx</span>
+          <p class="subtitle">Du monolithe au syst&egrave;me distribu&eacute; &mdash; sch&eacute;mas, m&eacute;taphores et code NestJS concret pour comprendre chaque composant&nbsp;: Gateway, services m&eacute;tier, Message Broker.</p>
+          <div class="meta-tags">
+            <span
+              v-for="tag in metaTags"
+              :key="tag.label"
+              class="meta-tag"
+              :class="tag.colorClass"
+            >{{ tag.label }}</span>
           </div>
         </header>
 
-        <!-- ═══════════════════════════════════════ -->
-        <!-- Section 1 : Monolithe vs Microservices  -->
-        <!-- ═══════════════════════════════════════ -->
+        <!-- ══ 01 — INTRO ══ -->
         <section id="intro" class="section">
-          <div class="section-eyebrow">Introduction</div>
-          <h2>Monolithe vs Microservices</h2>
-          <p>
-            Imagine un <strong>grand h&ocirc;tel tout-en-un</strong> : restaurant, spa, salle de conf&eacute;rence, h&eacute;bergement &mdash; tout sous le m&ecirc;me toit, g&eacute;r&eacute; par une seule &eacute;quipe. C&rsquo;est le <em>monolithe</em>.
-            Maintenant imagine une <strong>rue commer&ccedil;ante</strong> : chaque boutique est ind&eacute;pendante, avec son propre personnel, ses propres horaires, sa propre caisse. C&rsquo;est les <em>microservices</em>.
-          </p>
-
-          <div class="diagram-wrap">
-            <svg viewBox="0 0 820 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Monolithe vs Microservices">
-              <!-- Monolith -->
-              <rect x="20" y="40" width="360" height="260" rx="16" fill="#1a1c21" stroke="#f87171" stroke-width="2" stroke-dasharray="6 4"/>
-              <text x="200" y="28" text-anchor="middle" fill="#f87171" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.1em">MONOLITHE</text>
-              <rect x="50" y="70" width="140" height="50" rx="8" fill="rgba(248,113,113,0.08)" stroke="#f87171" stroke-width="1"/>
-              <text x="120" y="100" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="13">Auth</text>
-              <rect x="210" y="70" width="140" height="50" rx="8" fill="rgba(248,113,113,0.08)" stroke="#f87171" stroke-width="1"/>
-              <text x="280" y="100" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="13">Commandes</text>
-              <rect x="50" y="140" width="140" height="50" rx="8" fill="rgba(248,113,113,0.08)" stroke="#f87171" stroke-width="1"/>
-              <text x="120" y="170" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="13">Paiements</text>
-              <rect x="210" y="140" width="140" height="50" rx="8" fill="rgba(248,113,113,0.08)" stroke="#f87171" stroke-width="1"/>
-              <text x="280" y="170" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="13">Notifications</text>
-              <rect x="120" y="210" width="160" height="50" rx="8" fill="rgba(248,113,113,0.12)" stroke="#f87171" stroke-width="1.5"/>
-              <text x="200" y="240" text-anchor="middle" fill="#f87171" font-family="IBM Plex Mono, monospace" font-size="12">1 seule DB</text>
-
-              <!-- Arrow -->
-              <text x="410" y="170" text-anchor="middle" fill="#6b7280" font-size="28">&#x2192;</text>
-
-              <!-- Microservices -->
-              <text x="620" y="28" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.1em">MICROSERVICES</text>
-              <rect x="450" y="50" width="150" height="100" rx="12" fill="#1a1c21" stroke="#2dd4bf" stroke-width="2"/>
-              <text x="525" y="90" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="13">Auth</text>
-              <rect x="470" y="118" width="110" height="22" rx="6" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="0.8"/>
-              <text x="525" y="133" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="9">sa propre DB</text>
-
-              <rect x="620" y="50" width="150" height="100" rx="12" fill="#1a1c21" stroke="#2dd4bf" stroke-width="2"/>
-              <text x="695" y="90" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="13">Commandes</text>
-              <rect x="640" y="118" width="110" height="22" rx="6" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="0.8"/>
-              <text x="695" y="133" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="9">sa propre DB</text>
-
-              <rect x="450" y="170" width="150" height="100" rx="12" fill="#1a1c21" stroke="#2dd4bf" stroke-width="2"/>
-              <text x="525" y="210" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="13">Paiements</text>
-              <rect x="470" y="238" width="110" height="22" rx="6" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="0.8"/>
-              <text x="525" y="253" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="9">sa propre DB</text>
-
-              <rect x="620" y="170" width="150" height="100" rx="12" fill="#1a1c21" stroke="#2dd4bf" stroke-width="2"/>
-              <text x="695" y="210" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="13">Notifications</text>
-              <rect x="640" y="238" width="110" height="22" rx="6" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="0.8"/>
-              <text x="695" y="253" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="9">sa propre DB</text>
-            </svg>
-            <div class="diagram-caption">fig.1 &mdash; Monolithe (une seule unit&eacute;) vs Microservices (services autonomes avec DB isol&eacute;es)</div>
+          <div class="section-header">
+            <span class="section-number">01</span>
+            <h2 class="section-title">Monolithe vs Microservices</h2>
+            <div class="section-line" />
           </div>
 
-          <div class="cards">
+          <div class="prose">
+            <p>L'architecture microservices consiste &agrave; d&eacute;couper une application en <strong>services ind&eacute;pendants</strong> qui communiquent entre eux. Pour comprendre pourquoi, il faut partir de son oppos&eacute;&nbsp;: le monolithe.</p>
+          </div>
+
+          <!-- SVG Diagram: Monolithe vs Microservices -->
+          <div class="diagram-wrap">
+            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+            <svg viewBox="0 0 820 320" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace">
+              <defs>
+                <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M2 1L8 5L2 9" fill="none" stroke="#4ae8b0" stroke-width="1.5" stroke-linecap="round" />
+                </marker>
+              </defs>
+              <!-- MONOLITH -->
+              <text x="185" y="22" text-anchor="middle" fill="#6a7090" font-size="11" font-weight="600" letter-spacing="3">MONOLITHE</text>
+              <rect x="40" y="34" width="290" height="256" rx="10" fill="#0a0c10" stroke="#e84a7a" stroke-width="1" stroke-dasharray="4 3" />
+              <text x="185" y="58" text-anchor="middle" fill="#6a7090" font-size="11">Une seule application d&eacute;ploy&eacute;e</text>
+              <rect x="64" y="68" width="242" height="42" rx="6" fill="#13161e" stroke="#1e2330" stroke-width="1" />
+              <text x="185" y="87" text-anchor="middle" fill="#f0f2fa" font-size="13" font-weight="500">Auth</text>
+              <text x="185" y="102" text-anchor="middle" fill="#6a7090" font-size="11">+ Users + Paiement</text>
+              <rect x="64" y="122" width="242" height="42" rx="6" fill="#13161e" stroke="#1e2330" stroke-width="1" />
+              <text x="185" y="141" text-anchor="middle" fill="#f0f2fa" font-size="13" font-weight="500">Catalogue</text>
+              <text x="185" y="156" text-anchor="middle" fill="#6a7090" font-size="11">+ Commandes + Stock</text>
+              <rect x="64" y="176" width="242" height="42" rx="6" fill="#13161e" stroke="#1e2330" stroke-width="1" />
+              <text x="185" y="195" text-anchor="middle" fill="#f0f2fa" font-size="13" font-weight="500">Notifications</text>
+              <text x="185" y="210" text-anchor="middle" fill="#6a7090" font-size="11">+ Emails + Push</text>
+              <rect x="64" y="232" width="242" height="38" rx="6" fill="#13161e" stroke="#1e2330" stroke-width="1" />
+              <text x="185" y="255" text-anchor="middle" fill="#d4d8e8" font-size="12" font-weight="500">1 seule base de donn&eacute;es</text>
+              <!-- MICROSERVICES -->
+              <text x="620" y="22" text-anchor="middle" fill="#6a7090" font-size="11" font-weight="600" letter-spacing="3">MICROSERVICES</text>
+              <rect x="440" y="34" width="128" height="42" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="504" y="53" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Auth</text>
+              <text x="504" y="68" text-anchor="middle" fill="#6a7090" font-size="10">service</text>
+              <rect x="584" y="34" width="128" height="42" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="648" y="53" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Users</text>
+              <text x="648" y="68" text-anchor="middle" fill="#6a7090" font-size="10">service</text>
+              <rect x="440" y="94" width="128" height="42" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="504" y="113" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Catalogue</text>
+              <text x="504" y="128" text-anchor="middle" fill="#6a7090" font-size="10">service</text>
+              <rect x="584" y="94" width="128" height="42" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="648" y="113" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Commandes</text>
+              <text x="648" y="128" text-anchor="middle" fill="#6a7090" font-size="10">service</text>
+              <rect x="440" y="154" width="128" height="42" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="504" y="173" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Paiement</text>
+              <text x="504" y="188" text-anchor="middle" fill="#6a7090" font-size="10">service</text>
+              <rect x="584" y="154" width="128" height="42" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="648" y="173" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Notifs</text>
+              <text x="648" y="188" text-anchor="middle" fill="#6a7090" font-size="10">service</text>
+              <rect x="444" y="214" width="56" height="24" rx="4" fill="#13161e" stroke="#1e2330" />
+              <text x="472" y="231" text-anchor="middle" fill="#6a7090" font-size="10">DB</text>
+              <rect x="508" y="214" width="56" height="24" rx="4" fill="#13161e" stroke="#1e2330" />
+              <text x="536" y="231" text-anchor="middle" fill="#6a7090" font-size="10">DB</text>
+              <rect x="572" y="214" width="56" height="24" rx="4" fill="#13161e" stroke="#1e2330" />
+              <text x="600" y="231" text-anchor="middle" fill="#6a7090" font-size="10">DB</text>
+              <rect x="636" y="214" width="56" height="24" rx="4" fill="#13161e" stroke="#1e2330" />
+              <text x="664" y="231" text-anchor="middle" fill="#6a7090" font-size="10">DB</text>
+              <text x="576" y="268" text-anchor="middle" fill="#6a7090" font-size="11">Chaque service a sa propre DB</text>
+              <line x1="568" y1="55" x2="584" y2="55" stroke="#1e2330" stroke-width="1" stroke-dasharray="3 2" />
+              <line x1="568" y1="115" x2="584" y2="115" stroke="#1e2330" stroke-width="1" stroke-dasharray="3 2" />
+              <line x1="568" y1="175" x2="584" y2="175" stroke="#1e2330" stroke-width="1" stroke-dasharray="3 2" />
+              <line x1="400" y1="20" x2="400" y2="300" stroke="#1e2330" stroke-width="1" stroke-dasharray="5 4" />
+            </svg>
+            <div class="diagram-caption">fig. 1 &mdash; monolithe vs architecture microservices</div>
+          </div>
+
+          <div class="cards cards-2col">
             <div
-              v-for="card in introCards"
-              :key="card.title"
+              v-for="card in comparisonCards"
+              :key="card.name"
               class="card"
               :class="card.colorClass"
             >
-              <div class="card-icon">{{ card.icon }}</div>
-              <h3 class="card-title">{{ card.title }}</h3>
-              <p class="card-body">{{ card.body }}</p>
+              <span class="card-icon">{{ card.icon }}</span>
+              <div class="card-name">{{ card.name }}</div>
+              <div class="card-title">{{ card.title }}</div>
+              <div class="card-desc">{{ card.desc }}</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ 02 — METAPHORE ══ -->
+        <section id="metaphore" class="section">
+          <div class="section-header">
+            <span class="section-number">02</span>
+            <h2 class="section-title">La M&eacute;taphore fondatrice</h2>
+            <div class="section-line" />
+          </div>
+
+          <div class="quote-box">
+            <div class="quote-icon">&#x1F3EC;</div>
+            <div class="quote-content">
+              <h3>Le Centre Commercial</h3>
+              <p>Imagine un <strong>grand centre commercial</strong>. Chaque boutique est autonome&nbsp;: elle g&egrave;re ses propres stocks, ses propres employ&eacute;s, ses propres horaires. La librairie peut faire des travaux sans fermer la boulangerie. Si la boutique de t&eacute;l&eacute;phones conna&icirc;t un rush, on ajoute des vendeurs sans toucher aux autres.</p>
+              <p>Le <strong>hall d'entr&eacute;e</strong> est l'API Gateway&nbsp;: tout le monde passe par l&agrave;, on v&eacute;rifie les sacs (auth), on indique o&ugrave; aller (routing). Les boutiques communiquent parfois par <em>interphone</em> (HTTP sync) ou d&eacute;posent des <em>messages en caisse centrale</em> (broker async) que les autres r&eacute;cup&egrave;rent quand elles sont disponibles.</p>
             </div>
           </div>
 
-          <div class="section-divider" />
+          <div class="prose">
+            <p>Cette m&eacute;taphore capture les trois principes fondamentaux des microservices&nbsp;: <strong>l'autonomie de d&eacute;ploiement</strong> (chaque service se d&eacute;ploie ind&eacute;pendamment), <strong>l'isolation des donn&eacute;es</strong> (chaque boutique g&egrave;re son propre stock), et <strong>la communication d&eacute;coupl&eacute;e</strong> (les boutiques ne partagent pas de caisse commune).</p>
+          </div>
         </section>
 
-        <!-- ═══════════════════════════════ -->
-        <!-- Section 2 : Architecture compl  -->
-        <!-- ═══════════════════════════════ -->
+        <!-- ══ 03 — ARCHITECTURE GLOBALE ══ -->
         <section id="architecture" class="section">
-          <div class="section-eyebrow">Composants</div>
-          <h2>Architecture compl&egrave;te</h2>
-          <p>
-            En production, un syst&egrave;me microservices ne se r&eacute;sume pas &agrave; &laquo;&nbsp;plusieurs apps&nbsp;&raquo;.
-            Il y a une <strong>API Gateway</strong>, un <strong>Message Broker</strong>, des <strong>bases de donn&eacute;es isol&eacute;es</strong>,
-            et un <strong>Service Registry</strong> pour que tout ce monde se retrouve.
-          </p>
-
-          <div class="diagram-wrap">
-            <svg viewBox="0 0 820 580" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture microservices compl&egrave;te">
-              <!-- Client -->
-              <rect x="310" y="10" width="200" height="50" rx="12" fill="#22252c" stroke="#60a5fa" stroke-width="2"/>
-              <text x="410" y="40" text-anchor="middle" fill="#60a5fa" font-family="IBM Plex Mono, monospace" font-size="13">Client (Browser/App)</text>
-
-              <!-- Arrow client->gateway -->
-              <line x1="410" y1="60" x2="410" y2="95" stroke="#353940" stroke-width="1.5" stroke-dasharray="4 3"/>
-              <text x="435" y="82" fill="#6b7280" font-family="IBM Plex Mono, monospace" font-size="9">HTTPS</text>
-
-              <!-- API Gateway -->
-              <rect x="220" y="95" width="380" height="70" rx="14" fill="rgba(251,191,36,0.06)" stroke="#fbbf24" stroke-width="2"/>
-              <text x="410" y="122" text-anchor="middle" fill="#fbbf24" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="0.08em">API GATEWAY</text>
-              <text x="410" y="146" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="11">Auth JWT &bull; Rate Limit &bull; Routing &bull; Logging</text>
-
-              <!-- Arrows gateway->services -->
-              <line x1="300" y1="165" x2="160" y2="230" stroke="#353940" stroke-width="1.5" stroke-dasharray="4 3"/>
-              <line x1="410" y1="165" x2="410" y2="230" stroke="#353940" stroke-width="1.5" stroke-dasharray="4 3"/>
-              <line x1="520" y1="165" x2="660" y2="230" stroke="#353940" stroke-width="1.5" stroke-dasharray="4 3"/>
-              <text x="220" y="195" fill="#6b7280" font-family="IBM Plex Mono, monospace" font-size="9">HTTP</text>
-              <text x="415" y="195" fill="#6b7280" font-family="IBM Plex Mono, monospace" font-size="9">HTTP</text>
-              <text x="600" y="195" fill="#6b7280" font-family="IBM Plex Mono, monospace" font-size="9">HTTP</text>
-
-              <!-- Service 1 : Auth -->
-              <rect x="60" y="230" width="200" height="90" rx="12" fill="#1a1c21" stroke="#a78bfa" stroke-width="1.5"/>
-              <text x="160" y="260" text-anchor="middle" fill="#a78bfa" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em">AUTH SERVICE</text>
-              <text x="160" y="280" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="11">Login, Register, JWT</text>
-              <rect x="110" y="292" width="100" height="20" rx="6" fill="rgba(167,139,250,0.08)" stroke="#a78bfa" stroke-width="0.8"/>
-              <text x="160" y="306" text-anchor="middle" fill="#a78bfa" font-family="IBM Plex Mono, monospace" font-size="9">auth-db</text>
-
-              <!-- Service 2 : Orders -->
-              <rect x="310" y="230" width="200" height="90" rx="12" fill="#1a1c21" stroke="#4ade80" stroke-width="1.5"/>
-              <text x="410" y="260" text-anchor="middle" fill="#4ade80" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em">ORDERS SERVICE</text>
-              <text x="410" y="280" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="11">CRUD commandes</text>
-              <rect x="360" y="292" width="100" height="20" rx="6" fill="rgba(74,222,128,0.08)" stroke="#4ade80" stroke-width="0.8"/>
-              <text x="410" y="306" text-anchor="middle" fill="#4ade80" font-family="IBM Plex Mono, monospace" font-size="9">orders-db</text>
-
-              <!-- Service 3 : Payments -->
-              <rect x="560" y="230" width="200" height="90" rx="12" fill="#1a1c21" stroke="#f87171" stroke-width="1.5"/>
-              <text x="660" y="260" text-anchor="middle" fill="#f87171" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em">PAYMENTS SERVICE</text>
-              <text x="660" y="280" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="11">Stripe, Factures</text>
-              <rect x="610" y="292" width="100" height="20" rx="6" fill="rgba(248,113,113,0.08)" stroke="#f87171" stroke-width="0.8"/>
-              <text x="660" y="306" text-anchor="middle" fill="#f87171" font-family="IBM Plex Mono, monospace" font-size="9">payments-db</text>
-
-              <!-- Message Broker -->
-              <rect x="220" y="380" width="380" height="60" rx="14" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="2"/>
-              <text x="410" y="408" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="0.08em">MESSAGE BROKER</text>
-              <text x="410" y="428" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="11">RabbitMQ / Kafka &mdash; Communication asynchrone</text>
-
-              <!-- Arrows services->broker -->
-              <line x1="160" y1="320" x2="310" y2="380" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4 3"/>
-              <line x1="410" y1="320" x2="410" y2="380" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4 3"/>
-              <line x1="660" y1="320" x2="510" y2="380" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4 3"/>
-              <text x="230" y="355" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="9">events</text>
-              <text x="415" y="355" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="9">events</text>
-              <text x="580" y="355" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="9">events</text>
-
-              <!-- Notifications service (consumes from broker) -->
-              <rect x="310" y="490" width="200" height="70" rx="12" fill="#1a1c21" stroke="#60a5fa" stroke-width="1.5"/>
-              <text x="410" y="520" text-anchor="middle" fill="#60a5fa" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em">NOTIFICATIONS</text>
-              <text x="410" y="540" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="11">Emails, Push, SMS</text>
-              <line x1="410" y1="440" x2="410" y2="490" stroke="#60a5fa" stroke-width="1" stroke-dasharray="4 3"/>
-              <text x="435" y="470" fill="#60a5fa" font-family="IBM Plex Mono, monospace" font-size="9">consume</text>
-            </svg>
-            <div class="diagram-caption">fig.2 &mdash; Architecture compl&egrave;te en production : Gateway, services, broker, DB isol&eacute;es</div>
+          <div class="section-header">
+            <span class="section-number">03</span>
+            <h2 class="section-title">Vue d'ensemble &mdash; Architecture compl&egrave;te</h2>
+            <div class="section-line" />
           </div>
 
-          <div class="section-divider" />
+          <div class="prose">
+            <p>Une architecture microservices en production se compose de plusieurs couches distinctes. Chaque couche a une responsabilit&eacute; pr&eacute;cise.</p>
+          </div>
+
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 820 580" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace">
+              <defs>
+                <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M2 1L8 5L2 9" fill="none" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round" />
+                </marker>
+              </defs>
+              <!-- CLIENTS -->
+              <text x="410" y="18" text-anchor="middle" fill="#6a7090" font-size="10" letter-spacing="3">CLIENTS</text>
+              <rect x="110" y="26" width="108" height="38" rx="8" fill="#13161e" stroke="#1e2330" />
+              <text x="164" y="44" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Web App</text>
+              <text x="164" y="57" text-anchor="middle" fill="#6a7090" font-size="10">React / Vue</text>
+              <rect x="356" y="26" width="108" height="38" rx="8" fill="#13161e" stroke="#1e2330" />
+              <text x="410" y="44" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Mobile</text>
+              <text x="410" y="57" text-anchor="middle" fill="#6a7090" font-size="10">iOS / Android</text>
+              <rect x="602" y="26" width="108" height="38" rx="8" fill="#13161e" stroke="#1e2330" />
+              <text x="656" y="44" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">API tiers</text>
+              <text x="656" y="57" text-anchor="middle" fill="#6a7090" font-size="10">Partenaires</text>
+              <line x1="164" y1="64" x2="290" y2="104" stroke="#4a5568" stroke-width="1" marker-end="url(#arr2)" />
+              <line x1="410" y1="64" x2="410" y2="104" stroke="#4a5568" stroke-width="1" marker-end="url(#arr2)" />
+              <line x1="656" y1="64" x2="530" y2="104" stroke="#4a5568" stroke-width="1" marker-end="url(#arr2)" />
+              <!-- API GATEWAY -->
+              <text x="410" y="100" text-anchor="middle" fill="#6a7090" font-size="10" letter-spacing="3">API GATEWAY</text>
+              <rect x="180" y="108" width="460" height="48" rx="10" fill="#0a0c10" stroke="#a78bfa" stroke-width="1.5" />
+              <text x="410" y="129" text-anchor="middle" fill="#f0f2fa" font-size="13" font-weight="500">API Gateway</text>
+              <text x="410" y="146" text-anchor="middle" fill="#6a7090" font-size="11">Auth &middot; Rate limiting &middot; Routing &middot; Load balancing</text>
+              <line x1="260" y1="156" x2="178" y2="198" stroke="#4a5568" stroke-width="1" marker-end="url(#arr2)" />
+              <line x1="310" y1="156" x2="318" y2="198" stroke="#4a5568" stroke-width="1" marker-end="url(#arr2)" />
+              <line x1="370" y1="156" x2="418" y2="198" stroke="#4a5568" stroke-width="1" marker-end="url(#arr2)" />
+              <line x1="460" y1="156" x2="548" y2="198" stroke="#4a5568" stroke-width="1" marker-end="url(#arr2)" />
+              <line x1="510" y1="156" x2="658" y2="198" stroke="#4a5568" stroke-width="1" marker-end="url(#arr2)" />
+              <!-- SERVICES -->
+              <text x="410" y="194" text-anchor="middle" fill="#6a7090" font-size="10" letter-spacing="3">SERVICES M&Eacute;TIER</text>
+              <rect x="76" y="202" width="118" height="46" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="135" y="222" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Auth</text>
+              <text x="135" y="237" text-anchor="middle" fill="#6a7090" font-size="10">JWT &middot; sessions</text>
+              <rect x="206" y="202" width="118" height="46" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="265" y="222" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Users</text>
+              <text x="265" y="237" text-anchor="middle" fill="#6a7090" font-size="10">Profils &middot; r&ocirc;les</text>
+              <rect x="336" y="202" width="148" height="46" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="410" y="222" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Commandes</text>
+              <text x="410" y="237" text-anchor="middle" fill="#6a7090" font-size="10">CRUD &middot; statuts</text>
+              <rect x="496" y="202" width="118" height="46" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="555" y="222" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Paiement</text>
+              <text x="555" y="237" text-anchor="middle" fill="#6a7090" font-size="10">Stripe &middot; facturation</text>
+              <rect x="626" y="202" width="118" height="46" rx="8" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1" />
+              <text x="685" y="222" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Notifs</text>
+              <text x="685" y="237" text-anchor="middle" fill="#6a7090" font-size="10">Email &middot; push &middot; SMS</text>
+              <line x1="135" y1="248" x2="200" y2="284" stroke="#4a5568" stroke-width="0.8" stroke-dasharray="3 2" />
+              <line x1="265" y1="248" x2="290" y2="284" stroke="#4a5568" stroke-width="0.8" stroke-dasharray="3 2" />
+              <line x1="410" y1="248" x2="410" y2="284" stroke="#4a5568" stroke-width="0.8" stroke-dasharray="3 2" />
+              <line x1="555" y1="248" x2="520" y2="284" stroke="#4a5568" stroke-width="0.8" stroke-dasharray="3 2" />
+              <line x1="685" y1="248" x2="620" y2="284" stroke="#4a5568" stroke-width="0.8" stroke-dasharray="3 2" />
+              <!-- BROKER -->
+              <text x="410" y="280" text-anchor="middle" fill="#6a7090" font-size="10" letter-spacing="3">COMMUNICATION ASYNC</text>
+              <rect x="176" y="286" width="468" height="42" rx="8" fill="#0a0c10" stroke="#e8c84a" stroke-width="1.5" />
+              <text x="410" y="305" text-anchor="middle" fill="#f0f2fa" font-size="13" font-weight="500">Message Broker</text>
+              <text x="410" y="320" text-anchor="middle" fill="#6a7090" font-size="11">Kafka &middot; RabbitMQ &mdash; &eacute;v&eacute;nements asynchrones</text>
+              <line x1="135" y1="248" x2="135" y2="354" stroke="#1e2330" stroke-width="0.8" />
+              <line x1="265" y1="248" x2="265" y2="354" stroke="#1e2330" stroke-width="0.8" />
+              <line x1="410" y1="248" x2="410" y2="354" stroke="#1e2330" stroke-width="0.8" />
+              <line x1="555" y1="248" x2="555" y2="354" stroke="#1e2330" stroke-width="0.8" />
+              <line x1="685" y1="248" x2="685" y2="354" stroke="#1e2330" stroke-width="0.8" />
+              <!-- DATABASES -->
+              <text x="410" y="350" text-anchor="middle" fill="#6a7090" font-size="10" letter-spacing="3">PERSISTENCE &mdash; 1 DB PAR SERVICE</text>
+              <rect x="75" y="356" width="120" height="38" rx="6" fill="#13161e" stroke="#1e2330" />
+              <text x="135" y="373" text-anchor="middle" fill="#d4d8e8" font-size="12" font-weight="500">Postgres</text>
+              <text x="135" y="386" text-anchor="middle" fill="#6a7090" font-size="10">users / auth</text>
+              <rect x="205" y="356" width="120" height="38" rx="6" fill="#13161e" stroke="#1e2330" />
+              <text x="265" y="373" text-anchor="middle" fill="#d4d8e8" font-size="12" font-weight="500">Postgres</text>
+              <text x="265" y="386" text-anchor="middle" fill="#6a7090" font-size="10">users data</text>
+              <rect x="350" y="356" width="120" height="38" rx="6" fill="#13161e" stroke="#1e2330" />
+              <text x="410" y="373" text-anchor="middle" fill="#d4d8e8" font-size="12" font-weight="500">MongoDB</text>
+              <text x="410" y="386" text-anchor="middle" fill="#6a7090" font-size="10">commandes</text>
+              <rect x="495" y="356" width="120" height="38" rx="6" fill="#13161e" stroke="#1e2330" />
+              <text x="555" y="373" text-anchor="middle" fill="#d4d8e8" font-size="12" font-weight="500">Postgres</text>
+              <text x="555" y="386" text-anchor="middle" fill="#6a7090" font-size="10">transactions</text>
+              <rect x="625" y="356" width="120" height="38" rx="6" fill="#13161e" stroke="#1e2330" />
+              <text x="685" y="373" text-anchor="middle" fill="#d4d8e8" font-size="12" font-weight="500">Redis</text>
+              <text x="685" y="386" text-anchor="middle" fill="#6a7090" font-size="10">queues / cache</text>
+              <!-- INFRA -->
+              <text x="410" y="418" text-anchor="middle" fill="#6a7090" font-size="10" letter-spacing="3">INFRASTRUCTURE TRANSVERSE</text>
+              <rect x="46" y="424" width="158" height="46" rx="8" fill="#0a0c10" stroke="#4a9ee8" stroke-width="1" />
+              <text x="125" y="444" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Service Discovery</text>
+              <text x="125" y="459" text-anchor="middle" fill="#6a7090" font-size="10">Consul &middot; Kubernetes</text>
+              <rect x="216" y="424" width="158" height="46" rx="8" fill="#0a0c10" stroke="#4a9ee8" stroke-width="1" />
+              <text x="295" y="444" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Observabilit&eacute;</text>
+              <text x="295" y="459" text-anchor="middle" fill="#6a7090" font-size="10">Logs &middot; traces &middot; m&eacute;triques</text>
+              <rect x="386" y="424" width="158" height="46" rx="8" fill="#0a0c10" stroke="#4a9ee8" stroke-width="1" />
+              <text x="465" y="444" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Circuit Breaker</text>
+              <text x="465" y="459" text-anchor="middle" fill="#6a7090" font-size="10">Resilience4j &middot; Hystrix</text>
+              <rect x="556" y="424" width="218" height="46" rx="8" fill="#0a0c10" stroke="#4a9ee8" stroke-width="1" />
+              <text x="665" y="444" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Orchestration</text>
+              <text x="665" y="459" text-anchor="middle" fill="#6a7090" font-size="10">Docker &middot; Kubernetes &middot; CI/CD</text>
+              <!-- legend -->
+              <rect x="46" y="492" width="728" height="72" rx="8" fill="#0a0c10" stroke="#1e2330" />
+              <rect x="66" y="510" width="12" height="12" rx="2" fill="#4ae8b0" opacity=".7" />
+              <text x="84" y="521" fill="#d4d8e8" font-size="11">Services m&eacute;tier</text>
+              <rect x="196" y="510" width="12" height="12" rx="2" fill="#a78bfa" opacity=".7" />
+              <text x="214" y="521" fill="#d4d8e8" font-size="11">Gateway</text>
+              <rect x="296" y="510" width="12" height="12" rx="2" fill="#e8c84a" opacity=".7" />
+              <text x="314" y="521" fill="#d4d8e8" font-size="11">Message broker</text>
+              <rect x="436" y="510" width="12" height="12" rx="2" fill="#4a9ee8" opacity=".7" />
+              <text x="454" y="521" fill="#d4d8e8" font-size="11">Infrastructure</text>
+              <rect x="556" y="510" width="12" height="12" rx="2" fill="#1e2330" />
+              <text x="574" y="521" fill="#d4d8e8" font-size="11">Bases de donn&eacute;es</text>
+              <text x="410" y="548" text-anchor="middle" fill="#4a5568" font-size="11">Chaque service est d&eacute;ploy&eacute; ind&eacute;pendamment dans son propre container Docker</text>
+            </svg>
+            <div class="diagram-caption">fig. 2 &mdash; architecture compl&egrave;te en production</div>
+          </div>
         </section>
 
-        <!-- ═══════════════════════════════ -->
-        <!-- Section 3 : API Gateway         -->
-        <!-- ═══════════════════════════════ -->
+        <!-- ══ 04 — API GATEWAY ══ -->
         <section id="gateway" class="section">
-          <div class="section-eyebrow">Composants</div>
-          <h2>Le point d&rsquo;entr&eacute;e unique</h2>
-          <p>
-            L&rsquo;API Gateway est la <strong>porte d&rsquo;entr&eacute;e unique</strong> du syst&egrave;me.
-            Aucun client n&rsquo;appelle directement un service &mdash; tout passe par le Gateway.
-            Il g&egrave;re l&rsquo;authentification, le rate limiting, le routing, et enrichit les requ&ecirc;tes
-            avant de les transf&eacute;rer au bon service.
-          </p>
-
-          <div class="callout">
-            <div class="callout-icon">&#x1F511;</div>
-            <div class="callout-content">
-              <strong>R&egrave;gle d&rsquo;or :</strong> L&rsquo;auth JWT est v&eacute;rifi&eacute;e <em>uniquement</em> au niveau du Gateway.
-              Les services downstream font confiance au header <code>x-user-id</code> inject&eacute; par le Gateway.
-              Si un service re-v&eacute;rifie le JWT, c&rsquo;est un code smell.
-            </div>
+          <div class="section-header">
+            <span class="section-number">04</span>
+            <h2 class="section-title">API Gateway &mdash; Le point d'entr&eacute;e unique</h2>
+            <div class="section-line" />
           </div>
 
-          <div class="cards">
+          <div class="prose">
+            <p>L'API Gateway est le <strong>r&eacute;ceptionniste de l'architecture</strong>. Personne n'entre dans le syst&egrave;me sans passer par lui. Il centralise toutes les pr&eacute;occupations transverses.</p>
+          </div>
+
+          <div class="info-box">
+            <strong>Responsabilit&eacute;s du Gateway</strong> &mdash; V&eacute;rification JWT &middot; routing vers les services &middot; rate limiting &middot; load balancing &middot; enrichissement des headers (injection de <code>x-user-id</code>)
+          </div>
+
+          <div class="cards cards-2col" style="margin: 28px 0;">
             <div
-              v-for="card in gatewayCards"
-              :key="card.title"
+              v-for="opt in gatewayOptions"
+              :key="opt.name"
               class="card"
-              :class="card.colorClass"
+              :class="opt.colorClass"
             >
-              <div class="card-icon">{{ card.icon }}</div>
-              <h3 class="card-title">{{ card.title }}</h3>
-              <p class="card-body">{{ card.body }}</p>
+              <span class="card-icon">{{ opt.icon }}</span>
+              <div class="card-name">{{ opt.name }}</div>
+              <div class="card-title">{{ opt.title }}</div>
+              <div class="card-desc">{{ opt.desc }}</div>
             </div>
           </div>
 
-          <h3>Comparaison des solutions Gateway</h3>
+          <h3>Spectre des responsabilit&eacute;s</h3>
+          <table class="decision-table">
+            <thead>
+              <tr>
+                <th>Fonctionnalit&eacute;</th>
+                <th>Nginx</th>
+                <th>Kong</th>
+                <th>AWS GW</th>
+                <th>NestJS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in gatewayRows" :key="row.feature">
+                <td>{{ row.feature }}</td>
+                <td :class="row.nginxClass">{{ row.nginx }}</td>
+                <td :class="row.kongClass">{{ row.kong }}</td>
+                <td :class="row.awsClass">{{ row.aws }}</td>
+                <td :class="row.nestjsClass">{{ row.nestjs }}</td>
+              </tr>
+            </tbody>
+          </table>
 
-          <div class="table-wrap">
-            <table class="compare-table">
-              <thead>
-                <tr>
-                  <th>Feature</th>
-                  <th>Nginx</th>
-                  <th>Kong</th>
-                  <th>AWS API GW</th>
-                  <th>NestJS</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in gatewayCompare" :key="row.feature">
-                  <td>{{ row.feature }}</td>
-                  <td :class="row.nginxClass">{{ row.nginx }}</td>
-                  <td :class="row.kongClass">{{ row.kong }}</td>
-                  <td :class="row.awsClass">{{ row.aws }}</td>
-                  <td :class="row.nestjsClass">{{ row.nestjs }}</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="info-box cyan">
+            <strong>En pratique</strong> &mdash; Nginx et NestJS ne s'excluent pas &mdash; ils se combinent. Nginx g&egrave;re TLS + compression en frontal, NestJS g&egrave;re la logique JWT + routing derri&egrave;re.
           </div>
-
-          <div class="callout callout-info">
-            <div class="callout-icon">&#x1F4A1;</div>
-            <div class="callout-content">
-              <strong>Recommandation :</strong> Commence avec <em>Nginx</em> si tu as juste besoin de routing.
-              Passe &agrave; <em>NestJS</em> d&egrave;s que tu as besoin de logique m&eacute;tier au niveau du Gateway
-              (transformation de requ&ecirc;tes, agr&eacute;gation de r&eacute;ponses, circuit breaker custom).
-            </div>
-          </div>
-
-          <div class="section-divider" />
         </section>
 
-        <!-- ═══════════════════════════════════ -->
-        <!-- Section 4 : Nginx vs NestJS         -->
-        <!-- ═══════════════════════════════════ -->
+        <!-- ══ 05 — NGINX ══ -->
         <section id="nginx" class="section">
-          <div class="section-eyebrow">Composants</div>
-          <h2>Pourquoi Nginx peut remplacer NestJS</h2>
-          <p>
-            Pour du <strong>simple reverse proxy</strong>, Nginx fait le job en quelques lignes de config.
-            Pas de code TypeScript, pas de build, pas de <code>node_modules</code>.
-            L&rsquo;overhead est quasi nul compar&eacute; &agrave; une app Node.js.
-          </p>
-
-          <div class="code-block">
-            <div class="code-header">
-              <span class="code-filename">nginx.conf</span>
-              <span class="code-lang">nginx</span>
-            </div>
-            <pre v-html="codeNginx"></pre>
+          <div class="section-header">
+            <span class="section-number">05</span>
+            <h2 class="section-title">Pourquoi Nginx peut remplacer NestJS</h2>
+            <div class="section-line" />
           </div>
 
-          <div class="callout callout-warn">
-            <div class="callout-icon">&#x26A0;&#xFE0F;</div>
-            <div class="callout-content">
-              <strong>Limite :</strong> Nginx ne fait pas de logique m&eacute;tier. Pas de v&eacute;rification JWT native,
-              pas de transformation de payload, pas de circuit breaker. D&egrave;s que tu as besoin de &ccedil;a,
-              il faut passer &agrave; une solution programmatique (NestJS, Kong avec plugins).
-            </div>
+          <div class="prose">
+            <p>Un API Gateway et un reverse proxy font <strong>la m&ecirc;me chose fondamentalement</strong>&nbsp;: rediriger du trafic HTTP. La diff&eacute;rence est une question de degr&eacute;, pas de nature.</p>
+            <p>La directive <code>proxy_pass</code> de Nginx fait exactement ce que fait <code>this.http.request()</code> dans un ProxyService NestJS &mdash; les deux op&egrave;rent un reverse proxy HTTP.</p>
           </div>
 
-          <div class="section-divider" />
+          <div class="code-filename">nginx.conf</div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="code-block" v-html="codeNginx" />
+
+          <div class="info-box red">
+            <strong>Limite de Nginx seul</strong> &mdash; Nginx ne peut pas lire ni valider un JWT &mdash; ce n'est pas un interpr&eacute;teur de code. Pour l'auth, il faut Kong (plugin JWT), AWS API Gateway, ou du code (NestJS).
+          </div>
         </section>
 
-        <!-- ═══════════════════════════════════ -->
-        <!-- Section 5 : Gateway NestJS complet  -->
-        <!-- ═══════════════════════════════════ -->
+        <!-- ══ 06 — GATEWAY CODE ══ -->
         <section id="gateway-code" class="section">
-          <div class="section-eyebrow">Composants</div>
-          <h2>Gateway NestJS complet</h2>
-          <p>
-            Le Gateway NestJS agit comme un <strong>proxy intelligent</strong>. Il intercepte toutes les requ&ecirc;tes,
-            v&eacute;rifie le JWT via un Guard, enrichit les headers, et forward la requ&ecirc;te vers le bon service.
-          </p>
-
-          <div class="code-block">
-            <div class="code-header">
-              <span class="code-filename">gateway.controller.ts</span>
-              <span class="code-lang">TypeScript</span>
-            </div>
-            <pre v-html="codeGatewayController"></pre>
+          <div class="section-header">
+            <span class="section-number">06</span>
+            <h2 class="section-title">Gateway NestJS complet</h2>
+            <div class="section-line" />
           </div>
 
-          <div class="code-block">
-            <div class="code-header">
-              <span class="code-filename">auth.guard.ts</span>
-              <span class="code-lang">TypeScript</span>
-            </div>
-            <pre v-html="codeAuthGuard"></pre>
+          <div class="prose">
+            <p>Un API Gateway NestJS est une application Nest standard dont les controllers <strong>ne font aucune logique m&eacute;tier</strong> &mdash; ils proxifient uniquement. L'auth est port&eacute;e par un Guard.</p>
           </div>
 
-          <div class="section-divider" />
+          <div class="code-filename">gateway.controller.ts</div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="code-block" v-html="codeGatewayController" />
+
+          <div class="code-filename">auth.guard.ts</div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="code-block" v-html="codeAuthGuard" />
         </section>
 
-        <!-- ═══════════════════════════════════ -->
-        <!-- Section 6 : Structure d'un service  -->
-        <!-- ═══════════════════════════════════ -->
+        <!-- ══ 07 — SERVICES METIER ══ -->
         <section id="services" class="section">
-          <div class="section-eyebrow">Services m&eacute;tier</div>
-          <h2>Structure d&rsquo;un service</h2>
-          <p>
-            Chaque microservice est une <strong>application autonome</strong> avec sa propre base de donn&eacute;es,
-            son propre sch&eacute;ma, ses propres tests. Il ne partage rien avec les autres services &mdash;
-            ni code, ni DB, ni mod&egrave;les.
-          </p>
+          <div class="section-header">
+            <span class="section-number">07</span>
+            <h2 class="section-title">Structure d'un service m&eacute;tier</h2>
+            <div class="section-line" />
+          </div>
 
-          <div class="cards cards-4">
+          <div class="prose">
+            <p>Un service m&eacute;tier est une <strong>application NestJS autonome</strong> avec une responsabilit&eacute; unique. Sa caract&eacute;ristique principale&nbsp;: ce qu'il <em>ne fait pas</em>.</p>
+          </div>
+
+          <div class="cards" style="margin: 28px 0;">
             <div
-              v-for="card in serviceCards"
-              :key="card.title"
+              v-for="(svc, idx) in serviceCards"
+              :key="idx"
               class="card"
-              :class="card.colorClass"
+              :class="svc.colorClass"
             >
-              <div class="card-icon">{{ card.icon }}</div>
-              <h3 class="card-title">{{ card.title }}</h3>
-              <p class="card-body" v-html="card.body"></p>
+              <span class="card-icon">{{ svc.icon }}</span>
+              <div class="card-name">{{ svc.name }}</div>
+              <div class="card-title">{{ svc.title }}</div>
+              <div class="card-desc">{{ svc.desc }}</div>
             </div>
           </div>
 
+          <!-- SVG: Anatomie d'un service metier -->
           <div class="diagram-wrap">
-            <svg viewBox="0 0 820 300" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Anatomie d'un service m&eacute;tier">
-              <text x="410" y="22" text-anchor="middle" fill="#4ade80" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.1em">ANATOMIE D'UN SERVICE METIER</text>
-
-              <!-- Outer box -->
-              <rect x="60" y="40" width="700" height="240" rx="16" fill="#1a1c21" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="6 4"/>
-              <text x="410" y="68" text-anchor="middle" fill="#4ade80" font-family="IBM Plex Mono, monospace" font-size="12">orders-service</text>
-
-              <!-- Controller -->
-              <rect x="100" y="90" width="180" height="70" rx="10" fill="rgba(251,191,36,0.06)" stroke="#fbbf24" stroke-width="1.2"/>
-              <text x="190" y="118" text-anchor="middle" fill="#fbbf24" font-family="IBM Plex Mono, monospace" font-size="11">Controller</text>
-              <text x="190" y="140" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="10">HTTP routes</text>
-
-              <!-- Service -->
-              <rect x="320" y="90" width="180" height="70" rx="10" fill="rgba(167,139,250,0.06)" stroke="#a78bfa" stroke-width="1.2"/>
-              <text x="410" y="118" text-anchor="middle" fill="#a78bfa" font-family="IBM Plex Mono, monospace" font-size="11">Service</text>
-              <text x="410" y="140" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="10">Business logic</text>
-
-              <!-- Repository -->
-              <rect x="540" y="90" width="180" height="70" rx="10" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="1.2"/>
-              <text x="630" y="118" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="11">Repository</text>
-              <text x="630" y="140" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="10">DB access (TypeORM)</text>
-
-              <!-- Arrows between layers -->
-              <line x1="280" y1="125" x2="320" y2="125" stroke="#353940" stroke-width="1.2"/>
-              <polygon points="318,121 326,125 318,129" fill="#353940"/>
-              <line x1="500" y1="125" x2="540" y2="125" stroke="#353940" stroke-width="1.2"/>
-              <polygon points="538,121 546,125 538,129" fill="#353940"/>
-
-              <!-- Events module -->
-              <rect x="320" y="190" width="180" height="60" rx="10" fill="rgba(96,165,250,0.06)" stroke="#60a5fa" stroke-width="1.2"/>
-              <text x="410" y="218" text-anchor="middle" fill="#60a5fa" font-family="IBM Plex Mono, monospace" font-size="11">Events</text>
-              <text x="410" y="236" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="10">Publish to broker</text>
-
-              <!-- Arrow service->events -->
-              <line x1="410" y1="160" x2="410" y2="190" stroke="#353940" stroke-width="1.2"/>
-              <polygon points="406,188 410,196 414,188" fill="#353940"/>
-
-              <!-- DB -->
-              <rect x="540" y="190" width="180" height="60" rx="10" fill="rgba(74,222,128,0.06)" stroke="#4ade80" stroke-width="1.2"/>
-              <text x="630" y="218" text-anchor="middle" fill="#4ade80" font-family="IBM Plex Mono, monospace" font-size="11">PostgreSQL</text>
-              <text x="630" y="236" text-anchor="middle" fill="#9ca3af" font-family="DM Sans, sans-serif" font-size="10">DB priv&eacute;e isol&eacute;e</text>
-
-              <!-- Arrow repo->db -->
-              <line x1="630" y1="160" x2="630" y2="190" stroke="#353940" stroke-width="1.2"/>
-              <polygon points="626,188 630,196 634,188" fill="#353940"/>
+            <svg viewBox="0 0 820 300" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace">
+              <defs>
+                <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M2 1L8 5L2 9" fill="none" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round" />
+                </marker>
+              </defs>
+              <rect x="30" y="30" width="130" height="38" rx="8" fill="#0a0c10" stroke="#a78bfa" stroke-width="1" />
+              <text x="95" y="47" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">API Gateway</text>
+              <text x="95" y="62" text-anchor="middle" fill="#6a7090" font-size="10">x-user-id header</text>
+              <rect x="30" y="82" width="130" height="38" rx="8" fill="#0a0c10" stroke="#e8c84a" stroke-width="1" />
+              <text x="95" y="99" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Message Broker</text>
+              <text x="95" y="114" text-anchor="middle" fill="#6a7090" font-size="10">events entrants</text>
+              <line x1="160" y1="49" x2="198" y2="90" stroke="#4a5568" stroke-width="0.8" marker-end="url(#arr3)" />
+              <line x1="160" y1="101" x2="198" y2="118" stroke="#4a5568" stroke-width="0.8" marker-end="url(#arr3)" />
+              <!-- Service box -->
+              <rect x="200" y="22" width="380" height="256" rx="12" fill="#0a0c10" stroke="#4ae8b0" stroke-width="1.5" />
+              <text x="390" y="44" text-anchor="middle" fill="#4ae8b0" font-size="11" letter-spacing="2">ORDERS-SERVICE</text>
+              <text x="390" y="60" text-anchor="middle" fill="#6a7090" font-size="10">Application NestJS autonome &middot; port 3001</text>
+              <rect x="220" y="70" width="340" height="40" rx="6" fill="#13161e" stroke="#1e2330" />
+              <text x="390" y="87" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Controller</text>
+              <text x="390" y="101" text-anchor="middle" fill="#6a7090" font-size="10">HTTP routes &middot; validation DTOs</text>
+              <line x1="390" y1="110" x2="390" y2="128" stroke="#4a5568" stroke-width="0.8" marker-end="url(#arr3)" />
+              <rect x="220" y="130" width="340" height="40" rx="6" fill="#13161e" stroke="#1e2330" />
+              <text x="390" y="147" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Service</text>
+              <text x="390" y="161" text-anchor="middle" fill="#6a7090" font-size="10">Logique m&eacute;tier &middot; orchestration</text>
+              <line x1="390" y1="170" x2="390" y2="188" stroke="#4a5568" stroke-width="0.8" marker-end="url(#arr3)" />
+              <rect x="220" y="190" width="340" height="40" rx="6" fill="#13161e" stroke="#1e2330" />
+              <text x="390" y="207" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Repository</text>
+              <text x="390" y="221" text-anchor="middle" fill="#6a7090" font-size="10">TypeORM &middot; acc&egrave;s DB</text>
+              <line x1="390" y1="230" x2="390" y2="248" stroke="#4a5568" stroke-width="0.8" marker-end="url(#arr3)" />
+              <rect x="220" y="248" width="340" height="24" rx="6" fill="#13161e" stroke="#1e2330" />
+              <text x="390" y="264" text-anchor="middle" fill="#d4d8e8" font-size="11" font-weight="500">EventEmitter &rarr; Broker</text>
+              <!-- Outputs -->
+              <line x1="580" y1="90" x2="618" y2="58" stroke="#4a5568" stroke-width="0.8" marker-end="url(#arr3)" />
+              <line x1="580" y1="210" x2="618" y2="190" stroke="#4a5568" stroke-width="0.8" marker-end="url(#arr3)" />
+              <line x1="580" y1="260" x2="618" y2="272" stroke="#4a5568" stroke-width="0.8" marker-end="url(#arr3)" />
+              <rect x="620" y="34" width="150" height="38" rx="8" fill="#13161e" stroke="#1e2330" />
+              <text x="695" y="51" text-anchor="middle" fill="#d4d8e8" font-size="12" font-weight="500">HTTP Response</text>
+              <text x="695" y="65" text-anchor="middle" fill="#6a7090" font-size="10">vers Gateway</text>
+              <rect x="620" y="168" width="150" height="50" rx="8" fill="#13161e" stroke="#1e2330" />
+              <text x="695" y="186" text-anchor="middle" fill="#d4d8e8" font-size="12" font-weight="500">Postgres</text>
+              <text x="695" y="201" text-anchor="middle" fill="#6a7090" font-size="10">DB d&eacute;di&eacute;e</text>
+              <text x="695" y="213" text-anchor="middle" fill="#6a7090" font-size="10">orders only</text>
+              <rect x="620" y="254" width="150" height="38" rx="8" fill="#0a0c10" stroke="#e8c84a" />
+              <text x="695" y="271" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Events sortants</text>
+              <text x="695" y="285" text-anchor="middle" fill="#6a7090" font-size="10">order.created...</text>
+              <text x="390" y="292" text-anchor="middle" fill="#4a5568" font-size="10">Le service ne sait pas qui l'appelle ni qui consomme ses events</text>
             </svg>
-            <div class="diagram-caption">fig.3 &mdash; Anatomie d&rsquo;un service m&eacute;tier : Controller &rarr; Service &rarr; Repository + Events</div>
+            <div class="diagram-caption">fig. 3 &mdash; anatomie d'un service m&eacute;tier</div>
           </div>
-
-          <div class="section-divider" />
         </section>
 
-        <!-- ═══════════════════════════════════════ -->
-        <!-- Section 7 : Impl&eacute;mentation compl&egrave;te   -->
-        <!-- ═══════════════════════════════════════ -->
+        <!-- ══ 08 — SERVICES CODE ══ -->
         <section id="services-code" class="section">
-          <div class="section-eyebrow">Services m&eacute;tier</div>
-          <h2>Impl&eacute;mentation compl&egrave;te</h2>
-          <p>
-            Voici le code complet d&rsquo;un service <strong>Orders</strong> &mdash; entity TypeORM,
-            service m&eacute;tier, et configuration Docker pour l&rsquo;isolation.
-          </p>
-
-          <div class="code-block">
-            <div class="code-header">
-              <span class="code-filename">order.entity.ts</span>
-              <span class="code-lang">TypeScript</span>
-            </div>
-            <pre v-html="codeOrderEntity"></pre>
+          <div class="section-header">
+            <span class="section-number">08</span>
+            <h2 class="section-title">Impl&eacute;mentation compl&egrave;te</h2>
+            <div class="section-line" />
           </div>
 
-          <div class="code-block">
-            <div class="code-header">
-              <span class="code-filename">orders.service.ts</span>
-              <span class="code-lang">TypeScript</span>
-            </div>
-            <pre v-html="codeOrdersService"></pre>
-          </div>
+          <div class="code-filename">order.entity.ts</div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="code-block" v-html="codeEntity" />
 
-          <div class="code-block">
-            <div class="code-header">
-              <span class="code-filename">docker-compose.yml</span>
-              <span class="code-lang">YAML</span>
-            </div>
-            <pre v-html="codeDockerCompose"></pre>
-          </div>
+          <div class="code-filename">orders.service.ts</div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="code-block" v-html="codeOrdersService" />
 
-          <div class="section-divider" />
+          <div class="code-filename">docker-compose.yml &mdash; extrait</div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="code-block" v-html="codeDocker" />
         </section>
 
-        <!-- ═══════════════════════════════════ -->
-        <!-- Section 8 : Message Broker          -->
-        <!-- ═══════════════════════════════════ -->
+        <!-- ══ 09 — BROKER ══ -->
         <section id="broker" class="section">
-          <div class="section-eyebrow">Communication</div>
-          <h2>La bo&icirc;te aux lettres du syst&egrave;me</h2>
-          <p>
-            Le <strong>Message Broker</strong> est l&rsquo;interm&eacute;diaire entre les services.
-            Au lieu d&rsquo;appels HTTP directs (synchrones, fragiles), les services publient des <em>events</em>
-            sur le broker. D&rsquo;autres services s&rsquo;y abonnent et r&eacute;agissent &mdash; sans conna&icirc;tre l&rsquo;&eacute;metteur.
-          </p>
+          <div class="section-header">
+            <span class="section-number">09</span>
+            <h2 class="section-title">La bo&icirc;te aux lettres du syst&egrave;me</h2>
+            <div class="section-line" />
+          </div>
 
+          <div class="prose">
+            <p>Le broker casse le mod&egrave;le de communication synchrone auquel on est habitu&eacute;. La m&eacute;taphore la plus juste&nbsp;: <strong>la lettre de courrier</strong>.</p>
+            <p>Quand tu envoies une lettre, tu ne restes pas debout devant ta bo&icirc;te &agrave; attendre la r&eacute;ponse. Tu d&eacute;poses et tu passes &agrave; autre chose. Le destinataire lira quand il sera disponible. Si tu envoies une circulaire, plusieurs personnes lisent la m&ecirc;me lettre.</p>
+          </div>
+
+          <!-- SVG: Sans broker vs avec broker -->
           <div class="diagram-wrap">
-            <svg viewBox="0 0 820 290" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Appels directs vs Message Broker">
-              <!-- Direct calls (left) -->
-              <text x="200" y="22" text-anchor="middle" fill="#f87171" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.1em">APPELS DIRECTS</text>
-              <rect x="60" y="40" width="120" height="50" rx="10" fill="#1a1c21" stroke="#f87171" stroke-width="1.2"/>
-              <text x="120" y="70" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="12">Orders</text>
-              <rect x="220" y="40" width="120" height="50" rx="10" fill="#1a1c21" stroke="#f87171" stroke-width="1.2"/>
-              <text x="280" y="70" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="12">Payments</text>
-              <rect x="140" y="120" width="120" height="50" rx="10" fill="#1a1c21" stroke="#f87171" stroke-width="1.2"/>
-              <text x="200" y="150" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="12">Notifs</text>
-
-              <!-- Direct arrows (messy coupling) -->
-              <line x1="180" y1="65" x2="220" y2="65" stroke="#f87171" stroke-width="1.2"/>
-              <polygon points="218,61 226,65 218,69" fill="#f87171"/>
-              <line x1="160" y1="90" x2="175" y2="120" stroke="#f87171" stroke-width="1.2"/>
-              <polygon points="171,118 178,124 175,114" fill="#f87171"/>
-              <line x1="260" y1="90" x2="230" y2="120" stroke="#f87171" stroke-width="1.2"/>
-              <polygon points="226,115 227,124 234,118" fill="#f87171"/>
-
-              <text x="200" y="200" text-anchor="middle" fill="#f87171" font-family="IBM Plex Mono, monospace" font-size="10">Couplage fort</text>
-              <text x="200" y="216" text-anchor="middle" fill="#6b7280" font-family="DM Sans, sans-serif" font-size="10">Chaque service conna&icirc;t les autres</text>
-
-              <!-- Separator -->
-              <line x1="410" y1="30" x2="410" y2="260" stroke="#353940" stroke-width="1" stroke-dasharray="4 3"/>
-              <text x="410" y="275" text-anchor="middle" fill="#6b7280" font-family="IBM Plex Mono, monospace" font-size="10">vs</text>
-
-              <!-- Broker (right) -->
-              <text x="620" y="22" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.1em">MESSAGE BROKER</text>
-              <rect x="500" y="40" width="120" height="50" rx="10" fill="#1a1c21" stroke="#4ade80" stroke-width="1.2"/>
-              <text x="560" y="70" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="12">Orders</text>
-              <rect x="660" y="40" width="120" height="50" rx="10" fill="#1a1c21" stroke="#a78bfa" stroke-width="1.2"/>
-              <text x="720" y="70" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="12">Payments</text>
-              <rect x="580" y="170" width="120" height="50" rx="10" fill="#1a1c21" stroke="#60a5fa" stroke-width="1.2"/>
-              <text x="640" y="200" text-anchor="middle" fill="#e2e4e9" font-family="DM Sans, sans-serif" font-size="12">Notifs</text>
-
-              <!-- Broker box -->
-              <rect x="550" y="110" width="180" height="40" rx="8" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="1.5"/>
-              <text x="640" y="135" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="11">RabbitMQ</text>
-
-              <!-- Broker arrows -->
-              <line x1="560" y1="90" x2="600" y2="110" stroke="#2dd4bf" stroke-width="1"/>
-              <polygon points="596,107 604,112 598,116" fill="#2dd4bf"/>
-              <line x1="680" y1="110" x2="720" y2="90" stroke="#2dd4bf" stroke-width="1"/>
-              <polygon points="716,87 724,86 718,94" fill="#2dd4bf"/>
-              <line x1="640" y1="150" x2="640" y2="170" stroke="#2dd4bf" stroke-width="1"/>
-              <polygon points="636,168 640,176 644,168" fill="#2dd4bf"/>
-
-              <text x="640" y="250" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="10">Couplage faible</text>
-              <text x="640" y="266" text-anchor="middle" fill="#6b7280" font-family="DM Sans, sans-serif" font-size="10">Les services ne se connaissent pas</text>
+            <svg viewBox="0 0 820 290" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace">
+              <defs>
+                <marker id="arr4r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M2 1L8 5L2 9" fill="none" stroke="#e84a7a" stroke-width="1.5" stroke-linecap="round" />
+                </marker>
+                <marker id="arr4y" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M2 1L8 5L2 9" fill="none" stroke="#e8c84a" stroke-width="1.5" stroke-linecap="round" />
+                </marker>
+              </defs>
+              <!-- SANS BROKER -->
+              <text x="195" y="18" text-anchor="middle" fill="#e84a7a" font-size="10" letter-spacing="3">SANS BROKER &mdash; couplage fort</text>
+              <rect x="40" y="26" width="110" height="40" rx="8" fill="#0a0c10" stroke="#4ae8b0" />
+              <text x="95" y="44" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Commandes</text>
+              <text x="95" y="58" text-anchor="middle" fill="#6a7090" font-size="10">service</text>
+              <line x1="150" y1="38" x2="188" y2="38" stroke="#e84a7a" stroke-width="1.2" marker-end="url(#arr4r)" />
+              <text x="169" y="32" text-anchor="middle" fill="#e84a7a" font-size="10">HTTP</text>
+              <rect x="190" y="22" width="110" height="32" rx="6" fill="#0a0c10" stroke="#e84a7a" stroke-width="1" stroke-dasharray="3 2" />
+              <text x="245" y="42" text-anchor="middle" fill="#d4d8e8" font-size="11">Paiement</text>
+              <line x1="150" y1="52" x2="188" y2="72" stroke="#e84a7a" stroke-width="1.2" marker-end="url(#arr4r)" />
+              <rect x="190" y="60" width="110" height="32" rx="6" fill="#0a0c10" stroke="#e84a7a" stroke-width="1" stroke-dasharray="3 2" />
+              <text x="245" y="80" text-anchor="middle" fill="#d4d8e8" font-size="11">Notifs</text>
+              <line x1="150" y1="60" x2="188" y2="110" stroke="#e84a7a" stroke-width="1.2" marker-end="url(#arr4r)" />
+              <rect x="190" y="100" width="110" height="32" rx="6" fill="#0a0c10" stroke="#e84a7a" stroke-width="1" stroke-dasharray="3 2" />
+              <text x="245" y="120" text-anchor="middle" fill="#d4d8e8" font-size="11">Stock</text>
+              <rect x="36" y="160" width="278" height="58" rx="6" fill="#0a0c10" stroke="#1e2330" />
+              <text x="175" y="181" text-anchor="middle" fill="#e84a7a" font-size="11">Si Paiement est down &rarr; Commandes &eacute;choue.</text>
+              <text x="175" y="197" text-anchor="middle" fill="#6a7090" font-size="11">Commandes doit conna&icirc;tre chaque service.</text>
+              <text x="175" y="213" text-anchor="middle" fill="#6a7090" font-size="11">Ajout d'un service &rarr; modifier Commandes.</text>
+              <line x1="410" y1="10" x2="410" y2="270" stroke="#1e2330" stroke-width="1" stroke-dasharray="5 4" />
+              <!-- AVEC BROKER -->
+              <text x="615" y="18" text-anchor="middle" fill="#4ae8b0" font-size="10" letter-spacing="3">AVEC BROKER &mdash; d&eacute;couplage fort</text>
+              <rect x="428" y="66" width="110" height="40" rx="8" fill="#0a0c10" stroke="#4ae8b0" />
+              <text x="483" y="84" text-anchor="middle" fill="#f0f2fa" font-size="12" font-weight="500">Commandes</text>
+              <text x="483" y="98" text-anchor="middle" fill="#6a7090" font-size="10">&eacute;met et oublie</text>
+              <line x1="538" y1="86" x2="566" y2="86" stroke="#e8c84a" stroke-width="1.5" marker-end="url(#arr4y)" />
+              <rect x="568" y="56" width="110" height="60" rx="10" fill="#0a0c10" stroke="#e8c84a" stroke-width="1.5" />
+              <text x="623" y="78" text-anchor="middle" fill="#e8c84a" font-size="12" font-weight="500">Broker</text>
+              <text x="623" y="94" text-anchor="middle" fill="#d4d8e8" font-size="10">order.created</text>
+              <text x="623" y="108" text-anchor="middle" fill="#6a7090" font-size="10">file d'attente</text>
+              <line x1="678" y1="70" x2="706" y2="48" stroke="#e8c84a" stroke-width="1" marker-end="url(#arr4y)" />
+              <line x1="678" y1="86" x2="706" y2="86" stroke="#e8c84a" stroke-width="1" marker-end="url(#arr4y)" />
+              <line x1="678" y1="102" x2="706" y2="124" stroke="#e8c84a" stroke-width="1" marker-end="url(#arr4y)" />
+              <rect x="708" y="28" width="88" height="32" rx="6" fill="#0a0c10" stroke="#4ae8b0" />
+              <text x="752" y="48" text-anchor="middle" fill="#d4d8e8" font-size="11">Paiement</text>
+              <rect x="708" y="70" width="88" height="32" rx="6" fill="#0a0c10" stroke="#4ae8b0" />
+              <text x="752" y="90" text-anchor="middle" fill="#d4d8e8" font-size="11">Notifs</text>
+              <rect x="708" y="112" width="88" height="32" rx="6" fill="#0a0c10" stroke="#4ae8b0" />
+              <text x="752" y="132" text-anchor="middle" fill="#d4d8e8" font-size="11">Stock</text>
+              <rect x="424" y="160" width="378" height="72" rx="6" fill="#0a0c10" stroke="#1e2330" />
+              <text x="613" y="181" text-anchor="middle" fill="#4ae8b0" font-size="11">Si Paiement est down &rarr; le message l'attend.</text>
+              <text x="613" y="197" text-anchor="middle" fill="#6a7090" font-size="11">Commandes ne conna&icirc;t aucun consommateur.</text>
+              <text x="613" y="213" text-anchor="middle" fill="#6a7090" font-size="11">Ajouter Analytics &rarr; brancher sans modifier Commandes.</text>
+              <text x="410" y="258" text-anchor="middle" fill="#4a5568" font-size="11">Commandes r&eacute;pond au client AVANT que Paiement et Notifs aient trait&eacute; quoi que ce soit</text>
             </svg>
-            <div class="diagram-caption">fig.4 &mdash; Appels directs (couplage fort) vs Message Broker (couplage faible)</div>
+            <div class="diagram-caption">fig. 4 &mdash; appels directs vs message broker</div>
           </div>
 
           <h3>RabbitMQ vs Kafka</h3>
-
-          <div class="table-wrap">
-            <table class="compare-table">
-              <thead>
-                <tr>
-                  <th>Crit&egrave;re</th>
-                  <th>RabbitMQ</th>
-                  <th>Kafka</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in brokerCompare" :key="row.criteria">
-                  <td>{{ row.criteria }}</td>
-                  <td :class="row.rabbitmqClass">{{ row.rabbitmq }}</td>
-                  <td :class="row.kafkaClass">{{ row.kafka }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="section-divider" />
+          <table class="decision-table">
+            <thead>
+              <tr>
+                <th>Crit&egrave;re</th>
+                <th>RabbitMQ</th>
+                <th>Kafka</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in brokerRows" :key="row.criteria">
+                <td>{{ row.criteria }}</td>
+                <td :class="row.rabbitmqClass">{{ row.rabbitmq }}</td>
+                <td :class="row.kafkaClass">{{ row.kafka }}</td>
+              </tr>
+            </tbody>
+          </table>
         </section>
 
-        <!-- ═══════════════════════════════════ -->
-        <!-- Section 9 : RabbitMQ + NestJS       -->
-        <!-- ═══════════════════════════════════ -->
+        <!-- ══ 10 — BROKER CODE ══ -->
         <section id="broker-code" class="section">
-          <div class="section-eyebrow">Communication</div>
-          <h2>RabbitMQ + NestJS</h2>
-          <p>
-            Voici comment un service <strong>&eacute;met</strong> un event et comment un autre service
-            <strong>&eacute;coute</strong> ce m&ecirc;me event &mdash; sans que les deux ne se connaissent.
-          </p>
-
-          <div class="code-block">
-            <div class="code-header">
-              <span class="code-filename">orders-events.service.ts</span>
-              <span class="code-lang">TypeScript</span>
-            </div>
-            <pre v-html="codeOrdersEvents"></pre>
+          <div class="section-header">
+            <span class="section-number">10</span>
+            <h2 class="section-title">RabbitMQ + NestJS</h2>
+            <div class="section-line" />
           </div>
 
-          <div class="code-block">
-            <div class="code-header">
-              <span class="code-filename">payments.controller.ts</span>
-              <span class="code-lang">TypeScript</span>
-            </div>
-            <pre v-html="codePaymentsController"></pre>
-          </div>
+          <div class="code-filename">orders-events.service.ts &mdash; producteur</div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="code-block" v-html="codeBrokerProducer" />
 
-          <div class="code-block">
-            <div class="code-header">
-              <span class="code-filename">main.ts</span>
-              <span class="code-lang">TypeScript</span>
-            </div>
-            <pre v-html="codeMainTs"></pre>
-          </div>
+          <div class="code-filename">payments.controller.ts &mdash; consommateur</div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="code-block" v-html="codeBrokerConsumer" />
 
-          <div class="section-divider" />
+          <div class="code-filename">main.ts &mdash; service consommateur (pas de port HTTP)</div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="code-block" v-html="codeBrokerMain" />
         </section>
 
-        <!-- ═══════════════════════════════════ -->
-        <!-- Section 10 : Flux complet           -->
-        <!-- ═══════════════════════════════════ -->
+        <!-- ══ 11 — FLUX COMPLET ══ -->
         <section id="flow" class="section">
-          <div class="section-eyebrow">Communication</div>
-          <h2>Passer une commande</h2>
-          <p>
-            Voici le flux complet quand un utilisateur passe une commande &mdash; du clic sur &laquo;&nbsp;Commander&nbsp;&raquo;
-            jusqu&rsquo;&agrave; la r&eacute;ception de l&rsquo;email de confirmation.
-          </p>
+          <div class="section-header">
+            <span class="section-number">11</span>
+            <h2 class="section-title">Flux bout en bout &mdash; Passer une commande</h2>
+            <div class="section-line" />
+          </div>
 
+          <div class="prose">
+            <p>Voici comment une requ&ecirc;te <code>POST /orders</code> traverse l'int&eacute;gralit&eacute; de l'architecture.</p>
+          </div>
+
+          <!-- SVG: Sequence diagram -->
           <div class="diagram-wrap">
-            <svg viewBox="0 0 820 380" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="S&eacute;quence compl&egrave;te d'une commande">
-              <!-- Timeline labels -->
-              <text x="100" y="30" text-anchor="middle" fill="#60a5fa" font-family="IBM Plex Mono, monospace" font-size="10">Client</text>
-              <text x="270" y="30" text-anchor="middle" fill="#fbbf24" font-family="IBM Plex Mono, monospace" font-size="10">Gateway</text>
-              <text x="440" y="30" text-anchor="middle" fill="#4ade80" font-family="IBM Plex Mono, monospace" font-size="10">Orders</text>
-              <text x="610" y="30" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="10">Broker</text>
-              <text x="740" y="30" text-anchor="middle" fill="#a78bfa" font-family="IBM Plex Mono, monospace" font-size="10">Payments</text>
-
-              <!-- Vertical lines -->
-              <line x1="100" y1="40" x2="100" y2="360" stroke="#353940" stroke-width="1" stroke-dasharray="3 3"/>
-              <line x1="270" y1="40" x2="270" y2="360" stroke="#353940" stroke-width="1" stroke-dasharray="3 3"/>
-              <line x1="440" y1="40" x2="440" y2="360" stroke="#353940" stroke-width="1" stroke-dasharray="3 3"/>
-              <line x1="610" y1="40" x2="610" y2="360" stroke="#353940" stroke-width="1" stroke-dasharray="3 3"/>
-              <line x1="740" y1="40" x2="740" y2="360" stroke="#353940" stroke-width="1" stroke-dasharray="3 3"/>
-
-              <!-- Step 1: Client -> Gateway -->
-              <line x1="100" y1="70" x2="270" y2="70" stroke="#60a5fa" stroke-width="1.5"/>
-              <polygon points="266,66 274,70 266,74" fill="#60a5fa"/>
-              <text x="185" y="62" text-anchor="middle" fill="#60a5fa" font-family="IBM Plex Mono, monospace" font-size="9">POST /orders</text>
-              <rect x="180" y="75" width="60" height="16" rx="4" fill="rgba(96,165,250,0.1)"/>
-              <text x="210" y="87" text-anchor="middle" fill="#60a5fa" font-family="IBM Plex Mono, monospace" font-size="8">+ JWT</text>
-
-              <!-- Step 2: Gateway checks JWT -->
-              <rect x="240" y="100" width="60" height="30" rx="6" fill="rgba(251,191,36,0.08)" stroke="#fbbf24" stroke-width="0.8"/>
-              <text x="270" y="119" text-anchor="middle" fill="#fbbf24" font-family="IBM Plex Mono, monospace" font-size="8">JWT OK</text>
-
-              <!-- Step 3: Gateway -> Orders -->
-              <line x1="270" y1="150" x2="440" y2="150" stroke="#fbbf24" stroke-width="1.5"/>
-              <polygon points="436,146 444,150 436,154" fill="#fbbf24"/>
-              <text x="355" y="142" text-anchor="middle" fill="#fbbf24" font-family="IBM Plex Mono, monospace" font-size="9">forward + x-user-id</text>
-
-              <!-- Step 4: Orders processes -->
-              <rect x="410" y="165" width="60" height="30" rx="6" fill="rgba(74,222,128,0.08)" stroke="#4ade80" stroke-width="0.8"/>
-              <text x="440" y="184" text-anchor="middle" fill="#4ade80" font-family="IBM Plex Mono, monospace" font-size="8">save DB</text>
-
-              <!-- Step 5: Orders -> Broker -->
-              <line x1="440" y1="210" x2="610" y2="210" stroke="#2dd4bf" stroke-width="1.5"/>
-              <polygon points="606,206 614,210 606,214" fill="#2dd4bf"/>
-              <text x="525" y="202" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="9">emit order.created</text>
-
-              <!-- Step 6: Orders -> Client (response) -->
-              <line x1="440" y1="240" x2="100" y2="240" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="4 3"/>
-              <polygon points="104,236 96,240 104,244" fill="#4ade80"/>
-              <text x="270" y="255" text-anchor="middle" fill="#4ade80" font-family="IBM Plex Mono, monospace" font-size="9">201 Created (avant que Payments traite)</text>
-
-              <!-- Step 7: Broker -> Payments -->
-              <line x1="610" y1="290" x2="740" y2="290" stroke="#a78bfa" stroke-width="1.5"/>
-              <polygon points="736,286 744,290 736,294" fill="#a78bfa"/>
-              <text x="675" y="282" text-anchor="middle" fill="#a78bfa" font-family="IBM Plex Mono, monospace" font-size="9">order.created</text>
-
-              <!-- Step 8: Payments processes -->
-              <rect x="710" y="305" width="60" height="30" rx="6" fill="rgba(167,139,250,0.08)" stroke="#a78bfa" stroke-width="0.8"/>
-              <text x="740" y="324" text-anchor="middle" fill="#a78bfa" font-family="IBM Plex Mono, monospace" font-size="8">charge</text>
-
-              <!-- Async zone label -->
-              <rect x="30" y="265" width="90" height="20" rx="6" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="0.8"/>
-              <text x="75" y="279" text-anchor="middle" fill="#2dd4bf" font-family="IBM Plex Mono, monospace" font-size="8">ASYNC</text>
+            <svg viewBox="0 0 820 380" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace">
+              <defs>
+                <marker id="arrs" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M2 1L8 5L2 9" fill="none" stroke="#4ae8b0" stroke-width="1.5" stroke-linecap="round" />
+                </marker>
+                <marker id="arrr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M2 1L8 5L2 9" fill="none" stroke="#6a7090" stroke-width="1.5" stroke-linecap="round" />
+                </marker>
+                <marker id="arry" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M2 1L8 5L2 9" fill="none" stroke="#e8c84a" stroke-width="1.5" stroke-linecap="round" />
+                </marker>
+              </defs>
+              <text x="68" y="20" text-anchor="middle" fill="#6a7090" font-size="10" font-weight="500">Client</text>
+              <text x="188" y="20" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="500">Gateway</text>
+              <text x="308" y="20" text-anchor="middle" fill="#6a7090" font-size="10" font-weight="500">Auth</text>
+              <text x="438" y="20" text-anchor="middle" fill="#4ae8b0" font-size="10" font-weight="500">Commandes</text>
+              <text x="588" y="20" text-anchor="middle" fill="#4ae8b0" font-size="10" font-weight="500">Paiement</text>
+              <text x="718" y="20" text-anchor="middle" fill="#4ae8b0" font-size="10" font-weight="500">Notifs</text>
+              <line x1="68" y1="28" x2="68" y2="360" stroke="#1e2330" stroke-width="0.8" />
+              <line x1="188" y1="28" x2="188" y2="360" stroke="#1e2330" stroke-width="0.8" />
+              <line x1="308" y1="28" x2="308" y2="360" stroke="#1e2330" stroke-width="0.8" />
+              <line x1="438" y1="28" x2="438" y2="360" stroke="#1e2330" stroke-width="0.8" />
+              <line x1="588" y1="28" x2="588" y2="360" stroke="#1e2330" stroke-width="0.8" />
+              <line x1="718" y1="28" x2="718" y2="360" stroke="#1e2330" stroke-width="0.8" />
+              <!-- Step 1 -->
+              <text x="38" y="60" text-anchor="end" fill="#4a5568" font-size="10">1</text>
+              <line x1="68" y1="56" x2="180" y2="56" stroke="#4ae8b0" stroke-width="1.2" marker-end="url(#arrs)" />
+              <text x="124" y="50" text-anchor="middle" fill="#d4d8e8" font-size="10">POST /orders</text>
+              <!-- Step 2 -->
+              <text x="38" y="90" text-anchor="end" fill="#4a5568" font-size="10">2</text>
+              <line x1="188" y1="86" x2="300" y2="86" stroke="#4ae8b0" stroke-width="1.2" marker-end="url(#arrs)" />
+              <text x="244" y="80" text-anchor="middle" fill="#d4d8e8" font-size="10">validate JWT</text>
+              <line x1="308" y1="100" x2="196" y2="100" stroke="#6a7090" stroke-width="0.8" stroke-dasharray="4 2" marker-end="url(#arrr)" />
+              <text x="252" y="114" text-anchor="middle" fill="#6a7090" font-size="10">&check; user_id</text>
+              <!-- Step 3 -->
+              <text x="38" y="134" text-anchor="end" fill="#4a5568" font-size="10">3</text>
+              <line x1="188" y1="130" x2="430" y2="130" stroke="#4ae8b0" stroke-width="1.2" marker-end="url(#arrs)" />
+              <text x="309" y="124" text-anchor="middle" fill="#d4d8e8" font-size="10">forward + x-user-id</text>
+              <!-- Step 4 -->
+              <text x="38" y="164" text-anchor="end" fill="#4a5568" font-size="10">4</text>
+              <rect x="420" y="152" width="36" height="20" rx="4" fill="#13161e" stroke="#1e2330" />
+              <text x="438" y="166" text-anchor="middle" fill="#6a7090" font-size="10">DB</text>
+              <text x="438" y="149" text-anchor="middle" fill="#6a7090" font-size="10">save order</text>
+              <!-- Step 5 -->
+              <text x="38" y="202" text-anchor="end" fill="#4a5568" font-size="10">5</text>
+              <line x1="438" y1="198" x2="580" y2="198" stroke="#e8c84a" stroke-width="1.2" stroke-dasharray="5 2" marker-end="url(#arry)" />
+              <line x1="438" y1="198" x2="710" y2="198" stroke="#e8c84a" stroke-width="1.2" stroke-dasharray="5 2" marker-end="url(#arry)" />
+              <text x="576" y="192" text-anchor="middle" fill="#e8c84a" font-size="10">event: order.created (async)</text>
+              <rect x="46" y="210" width="748" height="20" rx="4" fill="#0a0c10" opacity="0.8" />
+              <text x="420" y="224" text-anchor="middle" fill="#4a5568" font-size="10" letter-spacing="1">&larr; Les &eacute;tapes suivantes sont parall&egrave;les et ind&eacute;pendantes &rarr;</text>
+              <!-- Step 6 -->
+              <text x="38" y="268" text-anchor="end" fill="#4a5568" font-size="10">6</text>
+              <rect x="568" y="248" width="40" height="20" rx="4" fill="#13161e" stroke="#1e2330" />
+              <text x="588" y="262" text-anchor="middle" fill="#6a7090" font-size="10">Stripe</text>
+              <text x="588" y="245" text-anchor="middle" fill="#d4d8e8" font-size="10">process payment</text>
+              <!-- Step 7 -->
+              <text x="38" y="318" text-anchor="end" fill="#4a5568" font-size="10">7</text>
+              <rect x="700" y="298" width="36" height="20" rx="4" fill="#13161e" stroke="#1e2330" />
+              <text x="718" y="312" text-anchor="middle" fill="#6a7090" font-size="10">SMTP</text>
+              <text x="718" y="295" text-anchor="middle" fill="#d4d8e8" font-size="10">send email</text>
+              <!-- Step 8 -->
+              <text x="38" y="358" text-anchor="end" fill="#4a5568" font-size="10">8</text>
+              <line x1="430" y1="354" x2="76" y2="354" stroke="#6a7090" stroke-width="0.8" stroke-dasharray="4 2" marker-end="url(#arrr)" />
+              <text x="253" y="348" text-anchor="middle" fill="#6a7090" font-size="10">201 Created { order_id } &mdash; r&eacute;ponse sync imm&eacute;diate</text>
+              <!-- Legend -->
+              <line x1="46" y1="374" x2="66" y2="374" stroke="#4ae8b0" stroke-width="1.5" />
+              <text x="72" y="378" fill="#6a7090" font-size="10">sync HTTP</text>
+              <line x1="176" y1="374" x2="196" y2="374" stroke="#e8c84a" stroke-width="1.5" stroke-dasharray="5 2" />
+              <text x="202" y="378" fill="#6a7090" font-size="10">async event</text>
+              <line x1="336" y1="374" x2="356" y2="374" stroke="#6a7090" stroke-width="1" stroke-dasharray="4 2" />
+              <text x="362" y="378" fill="#6a7090" font-size="10">r&eacute;ponse</text>
             </svg>
-            <div class="diagram-caption">fig.5 &mdash; S&eacute;quence compl&egrave;te : le client re&ccedil;oit sa r&eacute;ponse <em>avant</em> que le paiement soit trait&eacute;</div>
+            <div class="diagram-caption">fig. 5 &mdash; s&eacute;quence compl&egrave;te d'une commande</div>
           </div>
 
-          <div class="callout">
-            <div class="callout-icon">&#x1F4E8;</div>
-            <div class="callout-content">
-              <strong>Point cl&eacute; :</strong> Le service Orders r&eacute;pond <code>201 Created</code> au client
-              <em>avant</em> que le paiement soit trait&eacute;. Le paiement se fait de mani&egrave;re asynchrone
-              via le broker. C&rsquo;est le principe du <strong>fire-and-forget</strong>.
-            </div>
+          <div class="info-box cyan">
+            <strong>Point cl&eacute; &mdash; Coh&eacute;rence &eacute;ventuelle</strong> &mdash; Le service Commandes r&eacute;pond <code>201 Created</code> imm&eacute;diatement au client (&eacute;tape 8), sans attendre que le paiement soit pr&eacute;lev&eacute; ni que l'email soit envoy&eacute;. Le syst&egrave;me converge vers un &eacute;tat coh&eacute;rent, mais pas instantan&eacute;ment.
           </div>
-
-          <div class="section-divider" />
         </section>
 
-        <!-- ═══════════════════════════════════════ -->
-        <!-- Section 11 : Quand adopter ?            -->
-        <!-- ═══════════════════════════════════════ -->
+        <!-- ══ 12 — QUAND ADOPTER ══ -->
         <section id="quand" class="section">
-          <div class="section-eyebrow">R&eacute;f&eacute;rences</div>
-          <h2>Quand adopter les microservices&nbsp;?</h2>
-          <p>
-            Les microservices ne sont <strong>pas une silver bullet</strong>. Martin Fowler lui-m&ecirc;me
-            recommande de commencer par un monolithe et de migrer quand la douleur organisationnelle
-            d&eacute;passe la douleur technique.
-          </p>
+          <div class="section-header">
+            <span class="section-number">12</span>
+            <h2 class="section-title">Quand adopter les microservices ?</h2>
+            <div class="section-line" />
+          </div>
+
+          <div class="prose">
+            <p>Les microservices ne sont <strong>pas la solution par d&eacute;faut</strong>. Le monolithe reste souvent plus sage au d&eacute;part.</p>
+          </div>
 
           <div class="flow-steps">
             <div
-              v-for="(step, i) in flowSteps"
-              :key="i"
+              v-for="step in flowSteps"
+              :key="step.num"
               class="flow-step"
             >
-              <div class="flow-num" :class="step.numClass">{{ i + 1 }}</div>
-              <p class="flow-text" v-html="step.text"></p>
-              <div v-if="i < flowSteps.length - 1" class="flow-connector" />
+              <div
+                class="flow-step-num"
+                :style="step.numStyle"
+              >{{ step.num }}</div>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <div class="flow-step-text" v-html="step.text" />
             </div>
           </div>
-
-          <div class="section-divider" />
         </section>
 
-        <!-- ═══════════════════════════════════════ -->
-        <!-- Section 12 : Pi&egrave;ges classiques   -->
-        <!-- ═══════════════════════════════════════ -->
+        <!-- ══ 13 — PIEGES ══ -->
         <section id="pieges" class="section">
-          <div class="section-eyebrow">R&eacute;f&eacute;rences</div>
-          <h2>Ce qui peut mal tourner</h2>
-          <p>
-            Les microservices introduisent une <strong>complexit&eacute; op&eacute;rationnelle</strong> significative.
-            Voici les pi&egrave;ges les plus fr&eacute;quents rencontr&eacute;s en production.
-          </p>
+          <div class="section-header">
+            <span class="section-number">13</span>
+            <h2 class="section-title">Pi&egrave;ges classiques &mdash; Ce qui peut mal tourner</h2>
+            <div class="section-line" />
+          </div>
 
-          <div class="cards cards-4">
+          <div class="cards">
             <div
-              v-for="card in trapCards"
-              :key="card.title"
-              class="card"
-              :class="card.colorClass"
+              v-for="piege in piegeCards"
+              :key="piege.name"
+              class="card pink"
             >
-              <div class="card-icon">{{ card.icon }}</div>
-              <h3 class="card-title">{{ card.title }}</h3>
-              <p class="card-body" v-html="card.body"></p>
+              <span class="card-icon">{{ piege.icon }}</span>
+              <div class="card-name">{{ piege.name }}</div>
+              <div class="card-title">{{ piege.title }}</div>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <div class="card-desc" v-html="piege.desc" />
             </div>
           </div>
 
-          <div class="callout callout-warn">
-            <div class="callout-icon">&#x26A0;&#xFE0F;</div>
-            <div class="callout-content">
-              <strong>R&egrave;gle de survie :</strong> Si tu ne peux pas nommer clairement les <em>bounded contexts</em>
-              de ton domaine, tu n&rsquo;es pas pr&ecirc;t pour les microservices. Tu vas d&eacute;couper au mauvais endroit
-              et cr&eacute;er un <strong>monolithe distribu&eacute;</strong> &mdash; la pire des architectures possibles.
-            </div>
+          <div class="rule-banner">
+            <strong>R&egrave;gle d'or</strong> &mdash; Un service ne fait jamais <code>import</code> d'un autre service. La communication passe uniquement par HTTP ou par events via le broker. C'est ce qui garantit l'isolation.
           </div>
         </section>
       </div>
@@ -1115,28 +1225,29 @@ useSeoMeta({
 </template>
 
 <style scoped>
-/* ── Page-level custom properties ── */
+/* ── Design tokens ── */
 .page {
-  --bg2: #141518;
-  --bg3: #1a1c21;
-  --bg4: #22252c;
-  --border: #2a2d35;
-  --border2: #353940;
-  --text: #e2e4e9;
-  --text2: #9ca3af;
-  --text3: #6b7280;
-  --accent: #4ade80;
-  --accent2: #22c55e;
-  --amber: #fbbf24;
-  --teal: #2dd4bf;
+  --bg: #0d0f14;
+  --surface: #13161e;
+  --border: #1e2330;
+  --accent: #e8c84a;
+  --accent2: #4ae8b0;
+  --accent3: #e84a7a;
+  --text: #d4d8e8;
+  --muted: #6a7090;
+  --white: #f0f2fa;
+  --green: #4ae8b0;
   --purple: #a78bfa;
-  --coral: #f87171;
-  --blue: #60a5fa;
+  --blue: #4a9ee8;
+  --orange: #e87a4a;
+  --red: #e84a7a;
+  --cyan: #22d3ee;
+  --yellow: #e8c84a;
   --mono: 'IBM Plex Mono', monospace;
   --sans: 'DM Sans', sans-serif;
   --serif: 'DM Serif Display', serif;
-  --sidebar-w: 260px;
-  --content-max: 860px;
+  --sidebar-w: 268px;
+  --content-max: 1000px;
 }
 
 :global(html) {
@@ -1147,503 +1258,385 @@ useSeoMeta({
 .main {
   margin-left: var(--sidebar-w);
   min-height: 100vh;
-  padding: 48px 40px 80px;
+  position: relative;
+  z-index: 1;
 }
 
 .content {
   max-width: var(--content-max);
   margin: 0 auto;
+  padding: 60px 48px 120px;
 }
 
 /* ── Back link ── */
-nav { margin-bottom: 32px; }
+nav { margin-bottom: 40px; }
 
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   font-family: var(--mono);
-  font-size: 0.8rem;
-  color: var(--text3);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
   text-decoration: none;
-  letter-spacing: 0.04em;
   transition: color 0.2s;
 }
 .back-link:hover { color: var(--accent); }
 .back-link::before { content: '\2190'; font-size: 14px; }
 
-/* ── Hero ── */
-.hero {
-  margin-bottom: 56px;
+/* ── Header ── */
+header {
+  margin-bottom: 72px;
+  border-left: 3px solid var(--accent);
+  padding-left: 24px;
 }
 
-.hero-eyebrow {
+.eyebrow {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--accent);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
+  color: var(--accent);
   margin-bottom: 12px;
 }
 
-.hero h1 {
+header h1 {
   font-family: var(--serif);
-  font-size: clamp(2.4rem, 5vw, 3.6rem);
-  line-height: 1.1;
-  color: var(--text);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  color: var(--white);
+  line-height: 1.15;
   margin-bottom: 16px;
 }
 
-.hero h1 em {
-  color: var(--accent);
-  font-style: normal;
-}
+header h1 em { font-style: italic; color: var(--accent); }
 
-.hero-desc {
-  font-size: 1.05rem;
-  color: var(--text2);
-  max-width: 600px;
+.subtitle {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 580px;
   line-height: 1.7;
-  margin-bottom: 20px;
 }
 
-.hero-meta {
+.meta-tags {
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 20px;
 }
 
-.hero-tag {
+.meta-tag {
   font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text2);
+  font-size: 10px;
   padding: 4px 10px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  letter-spacing: 0.04em;
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
+.meta-green  { color: var(--green);  background: rgba(74,232,176,0.08);  border: 1px solid rgba(74,232,176,0.2); }
+.meta-yellow { color: var(--accent); background: rgba(232,200,74,0.08);  border: 1px solid rgba(232,200,74,0.2); }
+.meta-purple { color: var(--purple); background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.2); }
+.meta-blue   { color: var(--blue);   background: rgba(74,158,232,0.08);  border: 1px solid rgba(74,158,232,0.2); }
+.meta-orange { color: var(--orange); background: rgba(232,122,74,0.08);  border: 1px solid rgba(232,122,74,0.2); }
 
 /* ── Sections ── */
 .section {
-  margin-bottom: 16px;
+  margin-bottom: 88px;
   scroll-margin-top: 32px;
 }
 
-.section-eyebrow {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--accent);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
 }
 
-.section h2 {
+.section-number {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(232,200,74,0.08);
+  border: 1px solid rgba(232,200,74,0.2);
+  padding: 4px 10px;
+  border-radius: 3px;
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.section-title {
   font-family: var(--serif);
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  color: var(--text);
-  margin-bottom: 16px;
-  line-height: 1.2;
+  font-size: 1.5rem;
+  color: var(--white);
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }
 
 .section h3 {
   font-family: var(--serif);
-  font-size: 1.25rem;
-  color: var(--text);
+  font-size: 1.15rem;
+  color: var(--white);
   margin: 32px 0 16px;
 }
 
-.section p {
-  color: var(--text2);
+/* ── Prose ── */
+.prose {
+  font-size: 0.925rem;
+  color: var(--text);
+  line-height: 1.85;
+  max-width: 780px;
+}
+.prose p { margin-bottom: 16px; }
+.prose strong { color: var(--white); font-weight: 500; }
+.prose em { color: var(--accent); font-style: italic; }
+.prose code {
+  font-family: var(--mono);
+  font-size: 0.82em;
+  color: var(--accent2);
+  background: rgba(74,232,176,0.08);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* ── Quote box ── */
+.quote-box {
+  background: linear-gradient(135deg, rgba(232,200,74,0.06), rgba(74,232,176,0.04));
+  border: 1px solid rgba(232,200,74,0.2);
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin: 40px 0;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.quote-icon { font-size: 2.2rem; flex-shrink: 0; margin-top: 2px; }
+.quote-content h3 {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.quote-content p {
+  font-size: 0.875rem;
+  color: var(--muted);
   line-height: 1.8;
-  margin-bottom: 20px;
-  font-size: 0.95rem;
+  margin-bottom: 12px;
 }
-
-.section p strong {
-  color: var(--text);
-  font-weight: 500;
-}
-
-.section p em {
-  color: var(--accent);
-  font-style: normal;
-}
-
-.section p code {
-  font-family: var(--mono);
-  font-size: 0.85em;
-  color: var(--accent);
-  background: rgba(74, 222, 128, 0.08);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.section-divider {
-  height: 1px;
-  background: var(--border);
-  margin: 48px 0;
-}
-
-/* ── Callouts ── */
-.callout {
-  display: flex;
-  gap: 16px;
-  padding: 20px 24px;
-  background: rgba(74, 222, 128, 0.04);
-  border: 1px solid rgba(74, 222, 128, 0.15);
-  border-radius: 12px;
-  margin: 24px 0;
-}
-
-.callout-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-  line-height: 1.6;
-}
-
-.callout-content {
-  font-size: 0.9rem;
-  color: var(--text2);
-  line-height: 1.7;
-}
-
-.callout-content strong {
-  color: var(--text);
-  font-weight: 500;
-}
-
-.callout-content em {
-  color: var(--accent);
-  font-style: normal;
-}
-
-.callout-content code {
-  font-family: var(--mono);
-  font-size: 0.85em;
-  color: var(--accent);
-  background: rgba(74, 222, 128, 0.08);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.callout-info {
-  background: rgba(96, 165, 250, 0.04);
-  border-color: rgba(96, 165, 250, 0.15);
-}
-
-.callout-info .callout-content em {
-  color: var(--blue);
-}
-
-.callout-warn {
-  background: rgba(251, 191, 36, 0.04);
-  border-color: rgba(251, 191, 36, 0.15);
-}
-
-.callout-warn .callout-content strong {
-  color: var(--amber);
-}
-
-.callout-warn .callout-content em {
-  color: var(--amber);
-}
-
-/* ── Code blocks ── */
-.code-block {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  margin: 20px 0;
-}
-
-.code-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background: var(--bg3);
-  border-bottom: 1px solid var(--border);
-}
-
-.code-filename {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--text);
-  font-weight: 500;
-}
-
-.code-lang {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text3);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.code-block pre {
-  padding: 20px;
-  overflow-x: auto;
-  font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--text2);
-  margin: 0;
-}
-
-/* Syntax highlighting for v-html code blocks */
-:deep(.kw) { color: var(--purple); }
-:deep(.dec) { color: var(--blue); }
-:deep(.str) { color: var(--accent); }
-:deep(.cmt) { color: var(--text3); font-style: italic; }
-:deep(.fn) { color: var(--amber); }
-:deep(.cls) { color: var(--teal); }
-:deep(.num) { color: var(--coral); }
-
-/* ── SVG diagrams ── */
-.diagram-wrap {
-  margin: 28px 0;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px 24px 16px;
-}
-
-.diagram-wrap svg {
-  width: 100%;
-  height: auto;
-}
-
-.diagram-caption {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text3);
-  text-align: center;
-  margin-top: 16px;
-  line-height: 1.5;
-}
-
-/* ── Comparison tables ── */
-.table-wrap {
-  overflow-x: auto;
-  margin: 20px 0;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-}
-
-.compare-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-
-.compare-table th {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text);
-  text-align: left;
-  padding: 12px 16px;
-  background: var(--bg3);
-  border-bottom: 1px solid var(--border);
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-
-.compare-table td {
-  padding: 10px 16px;
-  color: var(--text2);
-  border-bottom: 1px solid var(--border);
-  font-family: var(--sans);
-  white-space: nowrap;
-}
-
-.compare-table tr:last-child td {
-  border-bottom: none;
-}
-
-.compare-table td:first-child {
-  color: var(--text);
-  font-weight: 400;
-}
-
-.compare-table .check { color: var(--accent); }
-.compare-table .cross { color: var(--coral); }
-.compare-table .partial { color: var(--amber); }
+.quote-content p:last-child { margin-bottom: 0; }
+.quote-content em { color: var(--accent2); font-style: italic; }
+.quote-content strong { color: var(--white); font-weight: 500; }
 
 /* ── Cards ── */
 .cards {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
-  margin: 24px 0;
+  margin-top: 8px;
 }
-
-.cards.cards-4 {
-  grid-template-columns: repeat(2, 1fr);
-}
+.cards-2col { grid-template-columns: 1fr 1fr; }
 
 .card {
-  background: var(--bg3);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 24px;
-  transition: border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: default;
+  animation: fadeUp 0.4s ease both;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--card-accent, var(--accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.card:hover { border-color: var(--card-accent, var(--accent)); transform: translateY(-2px); }
+.card:hover::before { transform: scaleX(1); }
+.card-icon { font-size: 1.6rem; margin-bottom: 12px; display: block; }
+.card-name {
+  font-family: var(--mono);
+  font-size: 0.8rem; font-weight: 600;
+  color: var(--card-accent, var(--accent));
+  letter-spacing: 0.05em; margin-bottom: 6px; text-transform: uppercase;
+}
+.card-title { font-family: var(--serif); font-size: 1.1rem; color: var(--white); margin-bottom: 10px; }
+.card-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
+
+.green  { --card-accent: #4ae8b0; }
+.yellow { --card-accent: #e8c84a; }
+.blue   { --card-accent: #4a9ee8; }
+.purple { --card-accent: #a78bfa; }
+.pink   { --card-accent: #e84a7a; }
+.orange { --card-accent: #e87a4a; }
+.cyan   { --card-accent: #22d3ee; }
+
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.10s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.20s; }
+
+/* ── Info boxes ── */
+.info-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent2);
+  border-radius: 6px;
+  padding: 18px 22px;
+  margin: 24px 0;
+  font-size: 0.875rem;
+  color: var(--text);
+  line-height: 1.7;
+}
+.info-box strong { color: var(--accent2); }
+.info-box code {
+  font-family: var(--mono);
+  font-size: 0.82em;
+  color: var(--accent2);
+  background: rgba(74,232,176,0.08);
+  padding: 1px 6px;
+  border-radius: 3px;
 }
 
-.card:hover {
-  border-color: var(--border2);
-}
+.info-box.cyan   { border-left-color: var(--cyan); }
+.info-box.cyan strong   { color: var(--cyan); }
+.info-box.yellow { border-left-color: var(--yellow); }
+.info-box.yellow strong { color: var(--yellow); }
+.info-box.red    { border-left-color: var(--red); }
+.info-box.red strong    { color: var(--red); }
 
-.card-icon {
+/* ── Diagram ── */
+.diagram-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 20px;
+  margin: 32px 0;
+  overflow-x: auto;
+}
+.diagram-wrap svg { display: block; width: 100%; height: auto; }
+.diagram-caption {
   font-family: var(--mono);
   font-size: 10px;
-  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 14px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin-bottom: 10px;
 }
 
-.card-title {
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  color: var(--text);
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-
-.card-body {
-  font-size: 0.88rem;
-  color: var(--text2);
-  line-height: 1.6;
-}
-
-:deep(.card-body code) {
+/* ── Code blocks ── */
+.code-block {
+  background: #0a0c10;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin: 20px 0;
+  overflow-x: auto;
   font-family: var(--mono);
-  font-size: 0.85em;
-  color: var(--accent);
-  background: rgba(74, 222, 128, 0.08);
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 0.78rem;
+  line-height: 1.8;
+  color: #c8d0e8;
 }
+.code-block :deep(.cm)  { color: #6a7090; font-style: italic; }
+.code-block :deep(.kw)  { color: #a78bfa; }
+.code-block :deep(.fn)  { color: #4ae8b0; }
+.code-block :deep(.str) { color: #e8c84a; }
+.code-block :deep(.ty)  { color: #4a9ee8; }
+.code-block :deep(.dec) { color: #e84a7a; }
+.code-block :deep(.num) { color: #fb923c; }
+.code-block :deep(.hl)  { color: var(--white); }
 
-/* Card color variants */
-.card.coral {
-  border-color: rgba(248, 113, 113, 0.2);
+.code-filename {
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--muted); background: var(--surface);
+  border: 1px solid var(--border); border-bottom: none;
+  border-radius: 6px 6px 0 0; padding: 6px 16px;
+  display: inline-block;
 }
-.card.coral .card-icon { color: var(--coral); }
-.card.coral:hover { border-color: rgba(248, 113, 113, 0.4); }
+.code-filename + .code-block { border-radius: 0 6px 6px 6px; margin-top: 0; }
 
-.card.teal {
-  border-color: rgba(45, 212, 191, 0.2);
+/* ── Decision table ── */
+.decision-table {
+  width: 100%; border-collapse: collapse; margin: 28px 0;
+  font-size: 0.85rem;
 }
-.card.teal .card-icon { color: var(--teal); }
-.card.teal:hover { border-color: rgba(45, 212, 191, 0.4); }
-
-.card.amber {
-  border-color: rgba(251, 191, 36, 0.2);
+.decision-table th {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 12px 16px; text-align: left;
+  border-bottom: 2px solid var(--border); color: var(--muted);
+  background: rgba(0,0,0,0.2);
 }
-.card.amber .card-icon { color: var(--amber); }
-.card.amber:hover { border-color: rgba(251, 191, 36, 0.4); }
-
-.card.purple {
-  border-color: rgba(167, 139, 250, 0.2);
+.decision-table td {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  vertical-align: top; line-height: 1.5; color: var(--text);
 }
-.card.purple .card-icon { color: var(--purple); }
-.card.purple:hover { border-color: rgba(167, 139, 250, 0.4); }
+.decision-table tr:last-child td { border-bottom: none; }
+.decision-table tr:hover td { background: rgba(255,255,255,0.015); }
+.dt-ok   { color: var(--green);  font-family: var(--mono); font-size: 0.8rem; }
+.dt-warn { color: var(--yellow); font-family: var(--mono); font-size: 0.8rem; }
+.dt-no   { color: var(--muted);  font-family: var(--mono); font-size: 0.8rem; }
 
 /* ── Flow steps ── */
-.flow-steps {
-  margin: 28px 0;
-}
-
+.flow-steps { margin: 28px 0; display: flex; flex-direction: column; gap: 0; }
 .flow-step {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  position: relative;
-  padding-bottom: 8px;
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
 }
+.flow-step:last-child { border-bottom: none; }
+.flow-step-num {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--bg); background: var(--accent2);
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px; font-weight: 600;
+}
+.flow-step-text { font-size: 0.9rem; color: var(--text); padding-top: 2px; line-height: 1.6; }
+.flow-step-text :deep(strong) { color: var(--white); font-weight: 500; }
 
-.flow-num {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* ── Rule banner ── */
+.rule-banner {
+  background: linear-gradient(135deg, rgba(74,232,176,0.07), rgba(167,139,250,0.05));
+  border: 1px solid rgba(74,232,176,0.25); border-radius: 8px;
+  padding: 20px 24px; margin: 28px 0;
+  font-family: var(--mono); font-size: 0.82rem;
+  color: var(--green); letter-spacing: 0.04em; line-height: 1.7;
+}
+.rule-banner strong { color: var(--white); }
+.rule-banner code {
+  color: var(--accent2);
+  background: rgba(74,232,176,0.08);
+  padding: 1px 6px;
+  border-radius: 3px;
   font-family: var(--mono);
-  font-size: 14px;
-  font-weight: 600;
-  flex-shrink: 0;
-  background: rgba(248, 113, 113, 0.1);
-  color: var(--coral);
-  border: 1px solid rgba(248, 113, 113, 0.25);
+  font-size: 0.82em;
 }
 
-.flow-num.teal {
-  background: rgba(45, 212, 191, 0.1);
-  color: var(--teal);
-  border-color: rgba(45, 212, 191, 0.25);
-}
-
-.flow-num.amber {
-  background: rgba(251, 191, 36, 0.1);
-  color: var(--amber);
-  border-color: rgba(251, 191, 36, 0.25);
-}
-
-.flow-num.coral {
-  background: rgba(248, 113, 113, 0.1);
-  color: var(--coral);
-  border-color: rgba(248, 113, 113, 0.25);
-}
-
-.flow-text {
-  font-size: 0.9rem;
-  color: var(--text2);
-  line-height: 1.7;
-  padding-top: 6px;
-}
-
-:deep(.flow-text strong) {
-  color: var(--text);
-  font-weight: 500;
-}
-
-.flow-connector {
-  position: absolute;
-  left: 17px;
-  top: 44px;
-  width: 2px;
-  height: 24px;
-  background: var(--border);
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Responsive ── */
-@media (max-width: 768px) {
-  .main {
-    margin-left: 0;
-    padding: 24px 16px 60px;
-  }
-
-  .cards,
-  .cards.cards-4 {
-    grid-template-columns: 1fr;
-  }
-
-  .hero h1 {
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .compare-table {
-    font-size: 0.75rem;
-  }
-
-  .compare-table th,
-  .compare-table td {
-    padding: 8px 10px;
-  }
+@media (max-width: 900px) {
+  .main { margin-left: 0; }
+  .content { padding: 32px 20px 80px; }
+  .cards-2col { grid-template-columns: 1fr; }
+  header h1 { font-size: 2.2rem; }
 }
 </style>
