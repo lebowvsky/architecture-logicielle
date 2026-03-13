@@ -133,6 +133,7 @@ const categories: Category[] = [
           "Services petits, ind\u00e9pendants, d\u00e9ployables s\u00e9par\u00e9ment. Chaque service poss\u00e8de sa propre base de donn\u00e9es. Communication via REST, gRPC ou messages. Scalabilit\u00e9 fine, mais complexit\u00e9 op\u00e9rationnelle \u00e9lev\u00e9e. La m\u00e9taphore\u00a0: un banc de poissons vs un requin.",
         tags: ['D\u00e9ploiement ind\u00e9pendant', 'API Gateway', 'Docker', 'Kubernetes'],
         quote: 'Martin Fowler\u00a0: \u00ab\u00a0Ne commencez pas avec les microservices.\u00a0\u00bb',
+        slug: 'microservices-architecture',
       },
       {
         icon: '\u{1F310}',
