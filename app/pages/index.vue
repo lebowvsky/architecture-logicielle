@@ -158,6 +158,7 @@ const categories: Category[] = [
         description:
           "Les composants communiquent via des \u00e9v\u00e9nements asynchrones (Kafka, RabbitMQ). D\u00e9couplage fort\u00a0: le producteur ignore qui consomme. Parfait pour les flux temps r\u00e9el. La m\u00e9taphore\u00a0: la radio FM \u2014 elle \u00e9met sans savoir combien d\u2019auditeurs l\u2019\u00e9coutent.",
         tags: ['Kafka', 'Async', 'Pub/Sub', 'D\u00e9couplage'],
+        slug: 'event-driven-architecture',
       },
       {
         icon: '\u{1F4DC}',
