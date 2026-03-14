@@ -8,6 +8,16 @@
  *          code blocks, and diagrams stay as direct template markup.
  */
 
+interface NavLink {
+  id: string
+  label: string
+}
+
+interface NavGroup {
+  label: string
+  links: NavLink[]
+}
+
 interface VariantCard {
   icon: string
   colorClass: string
@@ -467,6 +477,41 @@ const codeModularService = `<span class="cm">// CORRECT : on passe par les fa\u0
 <span class="cm">// import { ProductRepository } from '../products/internal/product.repository'; // \u2717</span>
 <span class="cm">// import { Product }           from '../products/internal/product.entity';     // \u2717</span>`
 
+/* ── Sidebar navigation ── */
+
+const sidebarGroups: NavGroup[] = [
+  {
+    label: 'Introduction',
+    links: [
+      { id: 'metaphore', label: 'La m\u00e9taphore' },
+      { id: 'anatomie', label: 'Les 4 couches' },
+      { id: 'variantes', label: 'Les 3 variantes' },
+    ],
+  },
+  {
+    label: 'Code & Structure',
+    links: [
+      { id: 'exemple', label: 'Exemple e-commerce' },
+      { id: 'modulaire', label: 'Monolithe modulaire' },
+    ],
+  },
+  {
+    label: 'Analyse',
+    links: [
+      { id: 'cycle', label: 'Cycle de vie' },
+      { id: 'avantages', label: 'Avantages & limites' },
+      { id: 'entity', label: 'L\u2019Entity pi\u00e8ge' },
+    ],
+  },
+  {
+    label: 'D\u00e9cision',
+    links: [
+      { id: 'quand', label: 'Quand choisir ?' },
+      { id: 'diagnostic', label: 'Diagnostic' },
+    ],
+  },
+]
+
 useHead({
   title: 'Architecture Monolithique \u2014 R\u00e9f\u00e9rence compl\u00e8te',
   script: [
@@ -512,7 +557,16 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container">
+  <div class="page">
+    <SideBar
+      eyebrow="// Engineering Handbook"
+      title="Architecture<br>Monolithique"
+      :groups="sidebarGroups"
+      accent-color="#e8c84a"
+    />
+
+    <main class="main">
+      <div class="content">
     <!-- Back link -->
     <nav>
       <NuxtLink to="/" class="back-link">
@@ -549,7 +603,7 @@ useSeoMeta({
     </div>
 
     <!-- Section 01 : La metaphore -->
-    <section class="section">
+    <section id="metaphore" class="section">
       <div class="section-header">
         <span class="section-number">01</span>
         <h2 class="section-title">La m&eacute;taphore : le couteau suisse</h2>
@@ -577,7 +631,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 02 : Anatomie -->
-    <section class="section">
+    <section id="anatomie" class="section">
       <div class="section-header">
         <span class="section-number">02</span>
         <h2 class="section-title">Anatomie d&rsquo;un monolithe &mdash; les 4 couches</h2>
@@ -669,7 +723,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 03 : Les 3 variantes -->
-    <section class="section">
+    <section id="variantes" class="section">
       <div class="section-header">
         <span class="section-number">03</span>
         <h2 class="section-title">Les 3 variantes du monolithe</h2>
@@ -702,7 +756,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 04 : Exemple concret e-commerce -->
-    <section class="section">
+    <section id="exemple" class="section">
       <div class="section-header">
         <span class="section-number">04</span>
         <h2 class="section-title">Exemple concret &mdash; e-commerce NestJS</h2>
@@ -747,7 +801,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 05 : Le monolithe modulaire -->
-    <section class="section">
+    <section id="modulaire" class="section">
       <div class="section-header">
         <span class="section-number">05</span>
         <h2 class="section-title">Le Monolithe Modulaire &mdash; la voie vertueuse</h2>
@@ -809,7 +863,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 06 : Cycle de vie -->
-    <section class="section">
+    <section id="cycle" class="section">
       <div class="section-header">
         <span class="section-number">06</span>
         <h2 class="section-title">Le cycle de vie d&rsquo;un monolithe</h2>
@@ -850,7 +904,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 07 : Avantages & inconvenients -->
-    <section class="section">
+    <section id="avantages" class="section">
       <div class="section-header">
         <span class="section-number">07</span>
         <h2 class="section-title">Avantages &amp; inconv&eacute;nients &agrave; grande &eacute;chelle</h2>
@@ -894,7 +948,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 08 : La critique d'Uncle Bob -->
-    <section class="section">
+    <section id="entity" class="section">
       <div class="section-header">
         <span class="section-number">08</span>
         <h2 class="section-title">La critique d&rsquo;Uncle Bob &mdash; l&rsquo;Entity pi&egrave;ge</h2>
@@ -961,7 +1015,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 09 : Quand choisir -->
-    <section class="section">
+    <section id="quand" class="section">
       <div class="section-header">
         <span class="section-number">09</span>
         <h2 class="section-title">Quand choisir le monolithe ?</h2>
@@ -1031,7 +1085,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 10 : Le diagnostic -->
-    <section class="section">
+    <section id="diagnostic" class="section">
       <div class="section-header">
         <span class="section-number">10</span>
         <h2 class="section-title">Le diagnostic &mdash; Votre monolithe est-il sain ?</h2>
@@ -1104,17 +1158,32 @@ useSeoMeta({
         {{ item.label }}
       </div>
     </footer>
+      </div>
+    </main>
   </div>
 </template>
 
 
 <style scoped>
-.container {
+.page {
+  --sidebar-w: 268px;
+}
+
+:global(html) {
+  scroll-behavior: smooth;
+}
+
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.content {
   max-width: 1100px;
   margin: 0 auto;
   padding: 60px 32px 100px;
-  position: relative;
-  z-index: 1;
 }
 
 /* Back link */
@@ -1950,6 +2019,10 @@ h1 em { font-style: italic; color: var(--accent); }
 .card:nth-child(4) { animation-delay: 0.20s; }
 
 /* Responsive */
+@media (max-width: 900px) {
+  .main { margin-left: 0; }
+}
+
 @media (max-width: 640px) {
   .comparison { grid-template-columns: 1fr; }
   .dep-flow { flex-wrap: wrap; justify-content: center; }

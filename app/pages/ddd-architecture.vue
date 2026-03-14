@@ -8,6 +8,16 @@
  *          direct template markup.
  */
 
+interface NavLink {
+  id: string
+  label: string
+}
+
+interface NavGroup {
+  label: string
+  links: NavLink[]
+}
+
 interface MetaTag {
   label: string
   colorClass: string
@@ -697,6 +707,41 @@ const codeBlockUseCase = `<span class="cm">// Application Layer \u2014 orchestre
   }
 }`
 
+/* ── Sidebar navigation ── */
+
+const sidebarGroups: NavGroup[] = [
+  {
+    label: 'Introduction',
+    links: [
+      { id: 'metaphore', label: 'La m\u00e9taphore' },
+      { id: 'overview', label: 'Vue d\u2019ensemble' },
+    ],
+  },
+  {
+    label: 'Architecture',
+    links: [
+      { id: 'couches', label: 'Couches DDD' },
+      { id: 'structure', label: 'Structure fichiers' },
+    ],
+  },
+  {
+    label: 'Building Blocks',
+    links: [
+      { id: 'aggregate', label: 'Aggregate' },
+      { id: 'entity-vo', label: 'Entity vs Value Object' },
+      { id: 'events', label: 'Domain Events' },
+      { id: 'repository', label: 'Repository & App Layer' },
+    ],
+  },
+  {
+    label: 'R\u00e9f\u00e9rences',
+    links: [
+      { id: 'pieges', label: 'Pi\u00e8ges classiques' },
+      { id: 'recap', label: 'R\u00e9capitulatif' },
+    ],
+  },
+]
+
 useHead({
   title: 'Domain-Driven Design \u2014 DDD',
   script: [
@@ -737,7 +782,16 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container">
+  <div class="page">
+    <SideBar
+      eyebrow="// Engineering Handbook"
+      title="Domain-Driven<br>Design"
+      :groups="sidebarGroups"
+      accent-color="#4ae8b0"
+    />
+
+    <main class="main">
+      <div class="content">
     <!-- Back link -->
     <nav>
       <NuxtLink to="/" class="back-link">
@@ -767,7 +821,7 @@ useSeoMeta({
     </header>
 
     <!-- Section 01 : La Metaphore fondatrice -->
-    <section class="section">
+    <section id="metaphore" class="section">
       <div class="section-header">
         <span class="section-number">01</span>
         <h2 class="section-title">La m&eacute;taphore fondatrice</h2>
@@ -812,7 +866,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 02 : Vue d'ensemble -->
-    <section class="section">
+    <section id="overview" class="section">
       <div class="section-header">
         <span class="section-number">02</span>
         <h2 class="section-title">Vue d&rsquo;ensemble &mdash; Les deux niveaux</h2>
@@ -895,7 +949,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 03 : Architecture en couches DDD -->
-    <section class="section">
+    <section id="couches" class="section">
       <div class="section-header">
         <span class="section-number">03</span>
         <h2 class="section-title">Architecture en couches DDD</h2>
@@ -947,7 +1001,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 04 : Structure de fichiers -->
-    <section class="section">
+    <section id="structure" class="section">
       <div class="section-header">
         <span class="section-number">04</span>
         <h2 class="section-title">Structure de fichiers recommand&eacute;e</h2>
@@ -959,7 +1013,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 05 : L'Aggregate -->
-    <section class="section">
+    <section id="aggregate" class="section">
       <div class="section-header">
         <span class="section-number">05</span>
         <h2 class="section-title">L&rsquo;Aggregate &mdash; Le c&oelig;ur battant du DDD</h2>
@@ -1077,7 +1131,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 06 : Entity vs Value Object -->
-    <section class="section">
+    <section id="entity-vo" class="section">
       <div class="section-header">
         <span class="section-number">06</span>
         <h2 class="section-title">Entity vs Value Object</h2>
@@ -1181,7 +1235,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 07 : Domain Events -->
-    <section class="section">
+    <section id="events" class="section">
       <div class="section-header">
         <span class="section-number">07</span>
         <h2 class="section-title">Domain Events &mdash; Le d&eacute;couplage par les faits</h2>
@@ -1239,7 +1293,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 08 : Repository & Application Layer -->
-    <section class="section">
+    <section id="repository" class="section">
       <div class="section-header">
         <span class="section-number">08</span>
         <h2 class="section-title">Repository &amp; Application Layer</h2>
@@ -1265,7 +1319,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 09 : Les pieges classiques -->
-    <section class="section">
+    <section id="pieges" class="section">
       <div class="section-header">
         <span class="section-number">09</span>
         <h2 class="section-title">Les pi&egrave;ges classiques &agrave; &eacute;viter</h2>
@@ -1305,7 +1359,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 10 : Recapitulatif -->
-    <section class="section">
+    <section id="recap" class="section">
       <div class="section-header">
         <span class="section-number">10</span>
         <h2 class="section-title">R&eacute;capitulatif &mdash; Les 7 piliers</h2>
@@ -1366,17 +1420,32 @@ useSeoMeta({
         {{ item.label }}
       </div>
     </footer>
+      </div>
+    </main>
   </div>
 </template>
 
 
 <style scoped>
-.container {
+.page {
+  --sidebar-w: 268px;
+}
+
+:global(html) {
+  scroll-behavior: smooth;
+}
+
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.content {
   max-width: 1100px;
   margin: 0 auto;
   padding: 60px 32px 100px;
-  position: relative;
-  z-index: 1;
 }
 
 /* Back link */
@@ -2261,6 +2330,10 @@ h1 em { font-style: italic; color: var(--accent2); }
 .card:nth-child(6) { animation-delay: 0.30s; }
 
 /* Responsive */
+@media (max-width: 900px) {
+  .main { margin-left: 0; }
+}
+
 @media (max-width: 640px) {
   .comparison { grid-template-columns: 1fr; }
   .lifecycle { flex-wrap: wrap; justify-content: center; }

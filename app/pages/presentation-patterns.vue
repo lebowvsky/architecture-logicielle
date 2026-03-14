@@ -8,6 +8,16 @@
  *          quote boxes, rule banners and info/warn boxes stay as direct template markup.
  */
 
+interface NavLink {
+  id: string
+  label: string
+}
+
+interface NavGroup {
+  label: string
+  links: NavLink[]
+}
+
 interface MetaphorCard {
   icon: string
   colorClass: string
@@ -658,6 +668,33 @@ view.<span class="fn">render</span>(model.<span class="fn">getData</span>());
 viewModel.articles.<span class="fn">abonner</span>(articles =&gt; <span class="kw">this</span>.<span class="fn">render</span>(articles));
 <span class="cm">//                 ^^^^^^^^^^^^^^^^^^ Binding automatique \u2014 z\u00e9ro appel explicite</span>`
 
+/* ── Sidebar navigation ── */
+
+const sidebarGroups: NavGroup[] = [
+  {
+    label: 'Introduction',
+    links: [
+      { id: 'metaphore', label: 'La m\u00e9taphore' },
+    ],
+  },
+  {
+    label: 'Patterns',
+    links: [
+      { id: 'mvc', label: 'MVC' },
+      { id: 'mvp', label: 'MVP' },
+      { id: 'mvvm', label: 'MVVM' },
+    ],
+  },
+  {
+    label: 'Synth\u00e8se',
+    links: [
+      { id: 'difference', label: 'Diff\u00e9rence fondamentale' },
+      { id: 'comparatif', label: 'Comparatif' },
+      { id: 'choix', label: 'Quel pattern choisir ?' },
+    ],
+  },
+]
+
 useHead({
   title: 'Patterns de Pr\u00e9sentation \u2014 MVC \u00b7 MVP \u00b7 MVVM',
   script: [
@@ -697,7 +734,16 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container">
+  <div class="page">
+    <SideBar
+      eyebrow="// Engineering Handbook"
+      title="MVC &middot; MVP<br>MVVM"
+      :groups="sidebarGroups"
+      accent-color="#9a4ae8"
+    />
+
+    <main class="main">
+      <div class="content">
     <!-- Back link -->
     <nav>
       <NuxtLink to="/" class="back-link">
@@ -731,7 +777,7 @@ useSeoMeta({
     </div>
 
     <!-- Section 01 : La métaphore du restaurant -->
-    <section class="section">
+    <section id="metaphore" class="section">
       <div class="section-header">
         <span class="section-number">01</span>
         <h2 class="section-title">La m&eacute;taphore du restaurant</h2>
@@ -777,7 +823,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 02 : MVC -->
-    <section class="section">
+    <section id="mvc" class="section">
       <div class="section-header">
         <span class="section-number">02</span>
         <h2 class="section-title">MVC &mdash; Model View Controller</h2>
@@ -900,7 +946,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 03 : MVP -->
-    <section class="section">
+    <section id="mvp" class="section">
       <div class="section-header">
         <span class="section-number">03</span>
         <h2 class="section-title">MVP &mdash; Model View Presenter</h2>
@@ -1013,7 +1059,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 04 : MVVM -->
-    <section class="section">
+    <section id="mvvm" class="section">
       <div class="section-header">
         <span class="section-number">04</span>
         <h2 class="section-title">MVVM &mdash; Model View ViewModel</h2>
@@ -1137,7 +1183,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 05 : La différence fondamentale en 3 lignes -->
-    <section class="section">
+    <section id="difference" class="section">
       <div class="section-header">
         <span class="section-number">05</span>
         <h2 class="section-title">La diff&eacute;rence fondamentale en 3 lignes</h2>
@@ -1149,7 +1195,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 06 : Comparatif synthétique -->
-    <section class="section">
+    <section id="comparatif" class="section">
       <div class="section-header">
         <span class="section-number">06</span>
         <h2 class="section-title">Comparatif synth&eacute;tique</h2>
@@ -1185,7 +1231,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 07 : Quel pattern choisir ? -->
-    <section class="section">
+    <section id="choix" class="section">
       <div class="section-header">
         <span class="section-number">07</span>
         <h2 class="section-title">Quel pattern choisir ?</h2>
@@ -1250,17 +1296,32 @@ useSeoMeta({
         {{ item.label }}
       </div>
     </footer>
+      </div>
+    </main>
   </div>
 </template>
 
 
 <style scoped>
-.container {
+.page {
+  --sidebar-w: 268px;
+}
+
+:global(html) {
+  scroll-behavior: smooth;
+}
+
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.content {
   max-width: 1100px;
   margin: 0 auto;
   padding: 60px 32px 100px;
-  position: relative;
-  z-index: 1;
 }
 
 /* Back link */
@@ -1957,6 +2018,10 @@ h1 em { font-style: italic; color: var(--accent); }
 .card:nth-child(3) { animation-delay: 0.15s; }
 
 /* Responsive */
+@media (max-width: 900px) {
+  .main { margin-left: 0; }
+}
+
 @media (max-width: 768px) {
   .cards-3 {
     grid-template-columns: 1fr;

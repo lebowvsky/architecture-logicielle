@@ -8,6 +8,16 @@
  *          template markup.
  */
 
+interface NavLink {
+  id: string
+  label: string
+}
+
+interface NavGroup {
+  label: string
+  links: NavLink[]
+}
+
 interface PrincipleCard {
   number: string
   title: string
@@ -611,6 +621,43 @@ const codeFunctional = `<span class="kw">import</span> { <span class="fn">pipe</
   console.<span class="fn">error</span>(<span class="str">'Failed:'</span>, result.left.code);
 }`
 
+/* ── Sidebar navigation ── */
+
+const sidebarGroups: NavGroup[] = [
+  {
+    label: 'Introduction',
+    links: [
+      { id: 'metaphore', label: 'La m\u00e9taphore' },
+      { id: 'overview', label: 'Vue d\u2019ensemble' },
+      { id: 'triangle', label: 'Triangle SOA' },
+    ],
+  },
+  {
+    label: 'Principes',
+    links: [
+      { id: 'principes', label: 'Principes de Thomas Erl' },
+      { id: 'orchestration', label: 'Orchestration vs Chor\u00e9graphie' },
+      { id: 'contrat', label: 'Contrat de service' },
+    ],
+  },
+  {
+    label: 'Impl\u00e9mentation',
+    links: [
+      { id: 'implementation', label: 'Approche OO' },
+      { id: 'esb', label: 'Service Bus (ESB)' },
+      { id: 'saga', label: 'Pattern Saga' },
+      { id: 'fonctionnelle', label: 'Approche fonctionnelle' },
+    ],
+  },
+  {
+    label: 'R\u00e9f\u00e9rences',
+    links: [
+      { id: 'soa-vs-micro', label: 'SOA vs Microservices' },
+      { id: 'quand', label: 'Quand utiliser la SOA ?' },
+    ],
+  },
+]
+
 useHead({
   title: 'SOA \u2014 Service-Oriented Architecture',
   script: [
@@ -650,7 +697,16 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container">
+  <div class="page">
+    <SideBar
+      eyebrow="// Engineering Handbook"
+      title="Service-Oriented<br>Architecture"
+      :groups="sidebarGroups"
+      accent-color="#4a9ee8"
+    />
+
+    <main class="main">
+      <div class="content">
     <!-- Back link -->
     <nav>
       <NuxtLink to="/" class="back-link">
@@ -670,7 +726,7 @@ useSeoMeta({
     </header>
 
     <!-- Section 01 : La Metaphore -->
-    <section class="section">
+    <section id="metaphore" class="section">
       <div class="section-header">
         <span class="section-number">01</span>
         <h2 class="section-title">La M&eacute;taphore</h2>
@@ -715,7 +771,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 02 : Vue d'ensemble -->
-    <section class="section">
+    <section id="overview" class="section">
       <div class="section-header">
         <span class="section-number">02</span>
         <h2 class="section-title">Vue d&rsquo;ensemble</h2>
@@ -801,7 +857,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 03 : Le Triangle SOA -->
-    <section class="section">
+    <section id="triangle" class="section">
       <div class="section-header">
         <span class="section-number">03</span>
         <h2 class="section-title">Le Triangle SOA &mdash; Publish / Find / Bind</h2>
@@ -868,7 +924,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 04 : Les 8 Principes -->
-    <section class="section">
+    <section id="principes" class="section">
       <div class="section-header">
         <span class="section-number">04</span>
         <h2 class="section-title">Les 8 Principes de Thomas Erl</h2>
@@ -900,7 +956,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 05 : Orchestration vs Choregraphie -->
-    <section class="section">
+    <section id="orchestration" class="section">
       <div class="section-header">
         <span class="section-number">05</span>
         <h2 class="section-title">Orchestration vs Chor&eacute;graphie</h2>
@@ -989,7 +1045,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 06 : Le Contrat de Service -->
-    <section class="section">
+    <section id="contrat" class="section">
       <div class="section-header">
         <span class="section-number">06</span>
         <h2 class="section-title">Le Contrat de Service</h2>
@@ -1031,7 +1087,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 07 : Implementation -->
-    <section class="section">
+    <section id="implementation" class="section">
       <div class="section-header">
         <span class="section-number">07</span>
         <h2 class="section-title">Impl&eacute;mentation &mdash; Approche Orient&eacute;e Objet</h2>
@@ -1053,7 +1109,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 08 : Le Service Bus -->
-    <section class="section">
+    <section id="esb" class="section">
       <div class="section-header">
         <span class="section-number">08</span>
         <h2 class="section-title">Le Service Bus &mdash; ESB simplifi&eacute;</h2>
@@ -1079,7 +1135,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 09 : Orchestration / Saga -->
-    <section class="section">
+    <section id="saga" class="section">
       <div class="section-header">
         <span class="section-number">09</span>
         <h2 class="section-title">Orchestration &mdash; Pattern Saga avec Compensation</h2>
@@ -1127,7 +1183,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 10 : Approche Fonctionnelle -->
-    <section class="section">
+    <section id="fonctionnelle" class="section">
       <div class="section-header">
         <span class="section-number">10</span>
         <h2 class="section-title">Approche Fonctionnelle &mdash; Pipeline fp-ts</h2>
@@ -1163,7 +1219,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 11 : SOA vs Microservices -->
-    <section class="section">
+    <section id="soa-vs-micro" class="section">
       <div class="section-header">
         <span class="section-number">11</span>
         <h2 class="section-title">SOA vs Microservices</h2>
@@ -1218,7 +1274,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 12 : Quand utiliser la SOA -->
-    <section class="section">
+    <section id="quand" class="section">
       <div class="section-header">
         <span class="section-number">12</span>
         <h2 class="section-title">Quand utiliser la SOA ?</h2>
@@ -1284,17 +1340,32 @@ useSeoMeta({
         {{ item.label }}
       </div>
     </footer>
+      </div>
+    </main>
   </div>
 </template>
 
 
 <style scoped>
-.container {
+.page {
+  --sidebar-w: 268px;
+}
+
+:global(html) {
+  scroll-behavior: smooth;
+}
+
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.content {
   max-width: 1100px;
   margin: 0 auto;
   padding: 60px 32px 100px;
-  position: relative;
-  z-index: 1;
 }
 
 /* Back link */
@@ -2267,6 +2338,10 @@ h1 em { font-style: italic; color: var(--accent); }
 .principle-card:nth-child(8) { animation-delay: 0.40s; }
 
 /* Responsive */
+@media (max-width: 900px) {
+  .main { margin-left: 0; }
+}
+
 @media (max-width: 700px) {
   .comparison { grid-template-columns: 1fr; }
   .two-col    { grid-template-columns: 1fr; }

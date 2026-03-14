@@ -8,6 +8,16 @@
  *          diagrams stay as direct template markup.
  */
 
+interface NavLink {
+  id: string
+  label: string
+}
+
+interface NavGroup {
+  label: string
+  links: NavLink[]
+}
+
 interface SideCard {
   icon: string
   colorClass: string
@@ -588,6 +598,42 @@ const fileTreeHtml = `<span class="ft-gray">src/</span>
 <span class="ft-orange">    \u2514\u2500\u2500 config/</span>
 <span class="ft-orange">        \u2514\u2500\u2500 CommandeModule.ts</span>              <span class="ft-gray">// @Module \u2014 DI : bind interfaces \u2192 impl\u00e9mentations</span>`
 
+/* ── Sidebar navigation ── */
+
+const sidebarGroups: NavGroup[] = [
+  {
+    label: 'Introduction',
+    links: [
+      { id: 'metaphore', label: 'La m\u00e9taphore' },
+      { id: 'overview', label: 'Vue d\u2019ensemble' },
+    ],
+  },
+  {
+    label: 'Principes',
+    links: [
+      { id: 'dependency-rule', label: 'Dependency Rule' },
+      { id: 'ports', label: 'Les Ports' },
+    ],
+  },
+  {
+    label: 'Code & Structure',
+    links: [
+      { id: 'structure', label: 'Structure src/' },
+      { id: 'code', label: 'Code couche par couche' },
+      { id: 'entity', label: 'Entity vs ORM' },
+      { id: 'nestjs', label: 'NestJS dans l\u2019hexagone' },
+    ],
+  },
+  {
+    label: 'R\u00e9f\u00e9rences',
+    links: [
+      { id: 'diagnostic', label: 'Test ultime' },
+      { id: 'correspondances', label: 'Correspondances' },
+      { id: 'resume', label: 'R\u00e9sum\u00e9' },
+    ],
+  },
+]
+
 useHead({
   title: 'Architecture Hexagonale \u2014 Ports & Adapters',
   script: [
@@ -627,7 +673,16 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container">
+  <div class="page">
+    <SideBar
+      eyebrow="// Engineering Handbook"
+      title="Architecture<br>Hexagonale"
+      :groups="sidebarGroups"
+      accent-color="#4ae8b0"
+    />
+
+    <main class="main">
+      <div class="content">
     <!-- Back link -->
     <nav>
       <NuxtLink to="/" class="back-link">
@@ -662,7 +717,7 @@ useSeoMeta({
     </div>
 
     <!-- Section 01 : La metaphore -->
-    <section class="section">
+    <section id="metaphore" class="section">
       <div class="section-header">
         <span class="section-number">01</span>
         <h2 class="section-title">La m&eacute;taphore : l&rsquo;ambassade avec des prises universelles</h2>
@@ -693,7 +748,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 02 : Vue d'ensemble -->
-    <section class="section">
+    <section id="overview" class="section">
       <div class="section-header">
         <span class="section-number">02</span>
         <h2 class="section-title">Vue d&rsquo;ensemble &mdash; Le sch&eacute;ma fondamental</h2>
@@ -796,7 +851,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 03 : La Dependency Rule -->
-    <section class="section">
+    <section id="dependency-rule" class="section">
       <div class="section-header">
         <span class="section-number">03</span>
         <h2 class="section-title">La Dependency Rule &mdash; la loi absolue</h2>
@@ -892,7 +947,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 04 : Les Ports -->
-    <section class="section">
+    <section id="ports" class="section">
       <div class="section-header">
         <span class="section-number">04</span>
         <h2 class="section-title">Les Ports &mdash; contrats propri&eacute;t&eacute; du domaine</h2>
@@ -952,7 +1007,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 05 : Structure src/ -->
-    <section class="section">
+    <section id="structure" class="section">
       <div class="section-header">
         <span class="section-number">05</span>
         <h2 class="section-title">Structure src/ &mdash; Feature &ldquo;Passer une commande&rdquo;</h2>
@@ -997,7 +1052,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 06 : Code couche par couche -->
-    <section class="section">
+    <section id="code" class="section">
       <div class="section-header">
         <span class="section-number">06</span>
         <h2 class="section-title">Code couche par couche</h2>
@@ -1026,7 +1081,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 07 : Entities NestJS/TypeORM vs Entities Domaine -->
-    <section class="section">
+    <section id="entity" class="section">
       <div class="section-header">
         <span class="section-number">07</span>
         <h2 class="section-title">Entities NestJS/TypeORM vs Entities Domaine</h2>
@@ -1092,7 +1147,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 08 : NestJS dans l'hexagone -->
-    <section class="section">
+    <section id="nestjs" class="section">
       <div class="section-header">
         <span class="section-number">08</span>
         <h2 class="section-title">NestJS dans l&rsquo;hexagone &mdash; O&ugrave; placer quoi ?</h2>
@@ -1152,7 +1207,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 09 : Le test ultime -->
-    <section class="section">
+    <section id="diagnostic" class="section">
       <div class="section-header">
         <span class="section-number">09</span>
         <h2 class="section-title">Le test ultime d&rsquo;un hexagone r&eacute;ussi</h2>
@@ -1205,7 +1260,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 10 : Correspondances -->
-    <section class="section">
+    <section id="correspondances" class="section">
       <div class="section-header">
         <span class="section-number">10</span>
         <h2 class="section-title">Hexagonale, Clean Architecture, Onion &mdash; Les correspondances</h2>
@@ -1256,7 +1311,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 11 : Resume -->
-    <section class="section">
+    <section id="resume" class="section">
       <div class="section-header">
         <span class="section-number">11</span>
         <h2 class="section-title">R&eacute;sum&eacute; &mdash; Les r&egrave;gles en une page</h2>
@@ -1286,17 +1341,32 @@ useSeoMeta({
         {{ item.label }}
       </div>
     </footer>
+      </div>
+    </main>
   </div>
 </template>
 
 
 <style scoped>
-.container {
+.page {
+  --sidebar-w: 268px;
+}
+
+:global(html) {
+  scroll-behavior: smooth;
+}
+
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.content {
   max-width: 1100px;
   margin: 0 auto;
   padding: 60px 32px 100px;
-  position: relative;
-  z-index: 1;
 }
 
 /* Back link */
@@ -2105,6 +2175,10 @@ h1 em { font-style: italic; color: var(--accent); }
 .card:nth-child(4) { animation-delay: 0.20s; }
 
 /* Responsive */
+@media (max-width: 900px) {
+  .main { margin-left: 0; }
+}
+
 @media (max-width: 640px) {
   .comparison { grid-template-columns: 1fr; }
   .dep-flow { flex-wrap: wrap; justify-content: center; }

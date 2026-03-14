@@ -7,6 +7,16 @@
  *          layers stack, flow diagram, and file tree stay as direct template markup.
  */
 
+interface NavLink {
+  id: string
+  label: string
+}
+
+interface NavGroup {
+  label: string
+  links: NavLink[]
+}
+
 interface VariantCard {
   icon: string
   colorClass: string
@@ -173,6 +183,34 @@ const fileTreeHtml = `<span class="ft-gray">src/</span>
 <span class="ft-blue">    \u2502   \u2514\u2500\u2500 001_create_orders.ts</span>
 <span class="ft-blue">    \u2514\u2500\u2500 database.module.ts</span>           <span class="ft-gray">// TypeORM config, connection pool</span>`
 
+/* ── Sidebar navigation ── */
+
+const sidebarGroups: NavGroup[] = [
+  {
+    label: 'Introduction',
+    links: [
+      { id: 'metaphore', label: 'La m\u00e9taphore' },
+      { id: 'couches', label: 'Les 4 couches' },
+    ],
+  },
+  {
+    label: 'Fonctionnement',
+    links: [
+      { id: 'flux', label: 'Flux d\u2019une requ\u00eate' },
+      { id: 'structure', label: 'Structure concr\u00e8te' },
+      { id: 'critique', label: 'Critique d\u2019Uncle Bob' },
+    ],
+  },
+  {
+    label: 'R\u00e9f\u00e9rences',
+    links: [
+      { id: 'variantes', label: 'Variantes N-Tier' },
+      { id: 'bilan', label: 'Avantages & limites' },
+      { id: 'quand', label: 'Quand l\u2019utiliser' },
+    ],
+  },
+]
+
 useHead({
   title: 'Architecture Layered / N-Tier \u2014 En Couches',
   script: [
@@ -212,7 +250,16 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container">
+  <div class="page">
+    <SideBar
+      eyebrow="// Engineering Handbook"
+      title="Architecture<br>Layered / N-Tier"
+      :groups="sidebarGroups"
+      accent-color="#e8c84a"
+    />
+
+    <main class="main">
+      <div class="content">
     <!-- Back link -->
     <nav>
       <NuxtLink to="/" class="back-link">
@@ -232,7 +279,7 @@ useSeoMeta({
     </header>
 
     <!-- Section 01 : La metaphore -->
-    <section class="section">
+    <section id="metaphore" class="section">
       <div class="section-header">
         <span class="section-number">01</span>
         <h2 class="section-title">La m&eacute;taphore : le restaurant gastronomique</h2>
@@ -269,7 +316,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 02 : Les 4 couches fondamentales -->
-    <section class="section">
+    <section id="couches" class="section">
       <div class="section-header">
         <span class="section-number">02</span>
         <h2 class="section-title">Les 4 couches fondamentales</h2>
@@ -398,7 +445,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 03 : Flux d'une requete -->
-    <section class="section">
+    <section id="flux" class="section">
       <div class="section-header">
         <span class="section-number">03</span>
         <h2 class="section-title">Flux d&rsquo;une requ&ecirc;te &mdash; du navigateur &agrave; la DB</h2>
@@ -467,7 +514,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 04 : Structure concrete -->
-    <section class="section">
+    <section id="structure" class="section">
       <div class="section-header">
         <span class="section-number">04</span>
         <h2 class="section-title">Structure concr&egrave;te &mdash; TypeScript / NestJS</h2>
@@ -488,7 +535,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 05 : La critique d'Uncle Bob -->
-    <section class="section">
+    <section id="critique" class="section">
       <div class="section-header">
         <span class="section-number">05</span>
         <h2 class="section-title">La critique d&rsquo;Uncle Bob &mdash; le pi&egrave;ge du sch&eacute;ma DB</h2>
@@ -574,7 +621,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 06 : Variantes -->
-    <section class="section">
+    <section id="variantes" class="section">
       <div class="section-header">
         <span class="section-number">06</span>
         <h2 class="section-title">Variantes &mdash; 2-Tier, 3-Tier, N-Tier</h2>
@@ -607,7 +654,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 07 : Avantages & Limites -->
-    <section class="section">
+    <section id="bilan" class="section">
       <div class="section-header">
         <span class="section-number">07</span>
         <h2 class="section-title">Avantages &amp; Limites &mdash; Bilan objectif</h2>
@@ -636,7 +683,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 08 : Quand l'utiliser -->
-    <section class="section">
+    <section id="quand" class="section">
       <div class="section-header">
         <span class="section-number">08</span>
         <h2 class="section-title">Quand l&rsquo;utiliser &mdash; et quand passer &agrave; autre chose</h2>
@@ -678,17 +725,32 @@ useSeoMeta({
       <span>// LAYERED ARCHITECTURE &mdash; N-TIER</span>
       <span>R&eacute;f&eacute;rence : <em>Clean Architecture</em> &mdash; Robert C. Martin (2017)</span>
     </footer>
+      </div>
+    </main>
   </div>
 </template>
 
 <style scoped>
-/* Container */
-.container {
+.page {
+  --sidebar-w: 268px;
+}
+
+:global(html) {
+  scroll-behavior: smooth;
+}
+
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* Content */
+.content {
   max-width: 1100px;
   margin: 0 auto;
   padding: 60px 32px 100px;
-  position: relative;
-  z-index: 1;
 }
 
 /* Back link */
@@ -1277,6 +1339,10 @@ h1 em { font-style: italic; color: var(--accent); }
 .card:nth-child(4) { animation-delay: 0.20s; }
 
 /* Responsive */
+@media (max-width: 900px) {
+  .main { margin-left: 0; }
+}
+
 @media (max-width: 640px) {
   .cards { grid-template-columns: 1fr; }
   .dep-flow { flex-wrap: wrap; justify-content: center; }

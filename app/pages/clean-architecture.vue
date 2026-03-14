@@ -7,6 +7,16 @@
  *          while unique prose, code blocks, and diagrams stay as direct template markup.
  */
 
+interface NavLink {
+  id: string
+  label: string
+}
+
+interface NavGroup {
+  label: string
+  links: NavLink[]
+}
+
 interface CircleCard {
   icon: string
   colorClass: string
@@ -356,6 +366,39 @@ const fileTreeHtml = `<span class="ft-gray">src/</span>
 <span class="ft-orange">    \u2514\u2500\u2500 config/</span>
 <span class="ft-orange">        \u2514\u2500\u2500 container.ts</span>         <span class="ft-gray">// IoC \u2014 bind interfaces \u2192 impl\u00e9mentations</span>`
 
+/* ── Sidebar navigation ── */
+
+const sidebarGroups: NavGroup[] = [
+  {
+    label: 'Introduction',
+    links: [
+      { id: 'metaphore', label: 'La m\u00e9taphore' },
+      { id: 'cercles', label: 'Les 4 cercles' },
+    ],
+  },
+  {
+    label: 'Principes',
+    links: [
+      { id: 'dependency-rule', label: 'Dependency Rule' },
+      { id: 'entity', label: 'Entity vs Framework' },
+    ],
+  },
+  {
+    label: 'Code & Structure',
+    links: [
+      { id: 'structure', label: 'Structure src/' },
+      { id: 'code', label: 'Exemples de code' },
+      { id: 'ports', label: 'Ports & Use Cases' },
+    ],
+  },
+  {
+    label: 'R\u00e9f\u00e9rences',
+    links: [
+      { id: 'diagnostic', label: 'Test ultime' },
+    ],
+  },
+]
+
 useHead({
   title: 'Clean Architecture \u2014 Uncle Bob',
   script: [
@@ -395,13 +438,22 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container">
-    <!-- Back link -->
-    <nav>
-      <NuxtLink to="/" class="back-link">
-        Retour aux architectures
-      </NuxtLink>
-    </nav>
+  <div class="page">
+    <SideBar
+      eyebrow="// Engineering Handbook"
+      title="Architecture<br>Clean"
+      :groups="sidebarGroups"
+      accent-color="#4ae8b0"
+    />
+
+    <main class="main">
+      <div class="content">
+        <!-- Back link -->
+        <nav>
+          <NuxtLink to="/" class="back-link">
+            Retour aux architectures
+          </NuxtLink>
+        </nav>
 
     <!-- Header -->
     <header>
@@ -430,7 +482,7 @@ useSeoMeta({
     </div>
 
     <!-- Section 01 : La metaphore -->
-    <section class="section">
+    <section id="metaphore" class="section">
       <div class="section-header">
         <span class="section-number">01</span>
         <h2 class="section-title">La m&eacute;taphore : l&rsquo;ambassade diplomatique</h2>
@@ -454,7 +506,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 02 : Les 4 cercles -->
-    <section class="section">
+    <section id="cercles" class="section">
       <div class="section-header">
         <span class="section-number">02</span>
         <h2 class="section-title">Les 4 cercles concentriques</h2>
@@ -526,7 +578,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 03 : La Dependency Rule -->
-    <section class="section">
+    <section id="dependency-rule" class="section">
       <div class="section-header">
         <span class="section-number">03</span>
         <h2 class="section-title">La Dependency Rule &mdash; la loi absolue</h2>
@@ -623,7 +675,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 04 : Entity Uncle Bob vs Entity Framework -->
-    <section class="section">
+    <section id="entity" class="section">
       <div class="section-header">
         <span class="section-number">04</span>
         <h2 class="section-title">Entity Uncle Bob vs Entity Framework</h2>
@@ -690,7 +742,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 05 : Structure src/ -->
-    <section class="section">
+    <section id="structure" class="section">
       <div class="section-header">
         <span class="section-number">05</span>
         <h2 class="section-title">Structure src/ &mdash; Feature &ldquo;Passer une commande&rdquo;</h2>
@@ -735,7 +787,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 06 : Exemples de code -->
-    <section class="section">
+    <section id="code" class="section">
       <div class="section-header">
         <span class="section-number">06</span>
         <h2 class="section-title">Exemples de code &mdash; couche par couche</h2>
@@ -764,7 +816,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 07 : Pourquoi ports/ dans usecases/ ? -->
-    <section class="section">
+    <section id="ports" class="section">
       <div class="section-header">
         <span class="section-number">07</span>
         <h2 class="section-title">Pourquoi ports/ vit dans usecases/ ?</h2>
@@ -806,7 +858,7 @@ useSeoMeta({
     </section>
 
     <!-- Section 08 : Le test ultime -->
-    <section class="section">
+    <section id="diagnostic" class="section">
       <div class="section-header">
         <span class="section-number">08</span>
         <h2 class="section-title">Le test ultime d&rsquo;une Clean Architecture r&eacute;ussie</h2>
@@ -870,17 +922,32 @@ useSeoMeta({
         {{ item.label }}
       </div>
     </footer>
+      </div>
+    </main>
   </div>
 </template>
 
 
 <style scoped>
-.container {
+.page {
+  --sidebar-w: 268px;
+}
+
+:global(html) {
+  scroll-behavior: smooth;
+}
+
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.content {
   max-width: 1100px;
   margin: 0 auto;
   padding: 60px 32px 100px;
-  position: relative;
-  z-index: 1;
 }
 
 /* Back link */
@@ -1548,6 +1615,10 @@ h1 em { font-style: italic; color: var(--accent); }
 .card:nth-child(4) { animation-delay: 0.20s; }
 
 /* Responsive */
+@media (max-width: 900px) {
+  .main { margin-left: 0; }
+}
+
 @media (max-width: 640px) {
   .comparison { grid-template-columns: 1fr; }
   .dep-flow { flex-wrap: wrap; justify-content: center; }
