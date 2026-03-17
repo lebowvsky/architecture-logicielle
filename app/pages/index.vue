@@ -167,6 +167,7 @@ const categories: Category[] = [
         description:
           "L\u2019\u00e9tat du syst\u00e8me est reconstruit en rejouant une s\u00e9quence d\u2019\u00e9v\u00e9nements immuables. Auditabilit\u00e9 totale. La m\u00e9taphore\u00a0: un journal comptable \u2014 on ne rature jamais, on passe une \u00e9criture de correction. Souvent combin\u00e9 avec CQRS.",
         tags: ['Immutabilit\u00e9', 'Audit Trail', 'Replay', 'Append-only'],
+        slug: 'event-sourcing-architecture',
       },
       {
         icon: '\u2702\uFE0F',
